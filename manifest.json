@@ -1,0 +1,22 @@
+{
+  "name": "RAMESH CHAND YADAV - Digital Visiting Card",
+  "short_name": "VisitingCard",
+  "description": "डिजिटल विजिटिंग कार्ड - LIC, MF, GIC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#e9f7ff",
+  "theme_color": "#007bff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "MyPhoto.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "MyPhoto.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
