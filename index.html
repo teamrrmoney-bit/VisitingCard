@@ -87,9 +87,18 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 <!-- Recommend Button -->
 <button class="recommend-btn" onclick="openRecommendForm()">Recommend and earn Rs. 200 to Rs.1000 on every lead</button>
 
-<!-- Policy Popup -->
-<div class="form-popup" id="policyPopup">
+<!-- Policy Popup (updated: includes 6-digit code, status, single-page check) -->
+<div class="form-popup" id="policyPopup" data-policy-type="">
   <h3 id="policyTitle">अपना पॉलिसी विवरण अपलोड करें</h3>
+
+  <!-- 6-अंकों का कोड: यह अनिवार्य है (upload & view दोनों के लिए) -->
+  <input type="text" id="policyCode" maxlength="6"
+         placeholder="6 अंकों का कोड डालें (अवश्यक)"
+         style="width:100%;padding:8px;margin:8px 0;border-radius:6px;border:1px solid #ccc;">
+
+  <!-- स्थिति/स्टेटस दिखाने के लिए -->
+  <div id="policyStatus" style="font-size:13px;color:#333;margin:6px 0; min-height:18px;"></div>
+
   <div id="policyRows">
     <div class="policy-row" style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
       <button class="upload-btn" style="background:red; color:white; flex:1;">UPLOAD PDF</button>
@@ -98,6 +107,7 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
     <button class="add-row" style="margin-top:5px; border:none; border-radius:50%; width:30px; height:30px; font-size:20px; cursor:pointer;">+</button>
   </div>
 </div>
+
 
 <!-- MF Form -->
 <div class="form-popup" id="mfPopup">
@@ -142,33 +152,20 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 </div>
 
 <script>
-/* ==== Replace your old script block with this whole script ==== */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec'; // आपका Apps Script URL (यदि बदलें तो यहाँ अपडेट करें)
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec'; // आपके Apps Script URL
-
-/* helper — बना कर close बटन जोड़ता है */
+/* ================= helper functions ================= */
 function makeCloseButton(container, onClose){
-  if(container.querySelector('.closeBtn')) return; // duplicate से बचना
+  if(container.querySelector('.closeBtn')) return;
   let close = document.createElement('button');
   close.type = 'button';
   close.className = 'closeBtn';
   close.setAttribute('aria-label','Close');
   close.innerHTML = '✕';
   Object.assign(close.style, {
-    position: 'absolute',
-    top: '8px',
-    right: '8px',
-    width: '34px',
-    height: '34px',
-    borderRadius: '50%',
-    border: 'none',
-    background: '#f5f5f5',
-    color: '#222',
-    fontSize: '18px',
-    lineHeight: '1',
-    cursor: 'pointer',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
-    zIndex: 10001
+    position: 'absolute', top: '8px', right: '8px', width: '34px', height: '34px',
+    borderRadius: '50%', border: 'none', background: '#f5f5f5', color: '#222', fontSize: '18px',
+    cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.25)', zIndex: 10001
   });
   close.addEventListener('click', function(e){
     e.stopPropagation();
@@ -177,31 +174,19 @@ function makeCloseButton(container, onClose){
   container.appendChild(close);
 }
 
-/* Close all visible form-popups and overlays */
 function closeAllPopups(){
-  // dynamic overlays
   document.querySelectorAll('.popup-overlay').forEach(o => o.remove());
-  // existing form-popup elements
   document.querySelectorAll('.form-popup').forEach(p => p.style.display = 'none');
 }
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllPopups(); });
 
-/* ESC key closes popups */
-document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape') closeAllPopups();
-});
-
-/* ----- Main dynamic form (Buy / others) ----- */
+/* ================= open simple forms (unchanged) ================= */
 function openForm(service){
-  // overlay
   const overlay = document.createElement('div');
   overlay.className = 'popup-overlay';
-  Object.assign(overlay.style, {
-    position:'fixed', top:0, left:0, width:'100%', height:'100%',
-    background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center',
-    zIndex:9999
-  });
+  Object.assign(overlay.style, { position:'fixed', top:0, left:0, width:'100%', height:'100%',
+    background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center', zIndex:9999 });
 
-  // box
   const box = document.createElement('div');
   box.style.cssText = 'background:#fff;padding:20px;max-width:420px;width:94%;position:relative;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.15);';
   box.innerHTML = `
@@ -220,83 +205,161 @@ function openForm(service){
       <button type="submit" style="background:#007bff;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;">सबमिट</button>
     </form>
   `;
-
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
-
-  // visible close button inside box
+  overlay.appendChild(box); document.body.appendChild(overlay);
   makeCloseButton(box, ()=> overlay.remove());
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
 
-  // click outside box closes popup
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlay) overlay.remove();
-  });
-
-  // submit
   const form = box.querySelector('.tempForm');
   form.addEventListener('submit', function(e){
     e.preventDefault();
     const fd = new FormData(this);
     fd.append('formType', service);
     fetch(GAS_URL, { method:'POST', body: fd })
-      .then(res=>res.json?.() /* if response json */)
       .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); overlay.remove(); })
       .catch(err=>{ console.error(err); alert('Error: '+err); });
   });
 }
 
-/* ----- PDF Upload Popup (existing #policyPopup element) ----- */
+/* ================= Policy popup open ================= */
 function openPolicyPopup(policyType){
   const popup = document.getElementById('policyPopup');
   if(!popup) return alert('Policy popup element नहीं मिला');
   popup.style.display = 'block';
-  popup.style.position = 'fixed'; // ensure positioned ancestor for absolute close btn
+  popup.style.position = 'fixed';
   popup.style.zIndex = 9999;
-  document.getElementById('policyTitle').innerText = policyType + ' Policy Upload';
-
-  // add close button if not present
+  // store policy type (used for upload/view)
+  popup.dataset.policyType = policyType || '';
+  document.getElementById('policyTitle').innerText = policyType || 'Policy';
+  document.getElementById('policyStatus').innerText = '';
   makeCloseButton(popup, ()=> popup.style.display = 'none');
-
-  // clicking outside (escape already handles). If you want click outside to close, we could wrap but existing layout is centered so keep simple.
 }
 
-document.getElementById('policyRows').addEventListener('click', function(e){
+/* ================= Helper: status messages in popup ================= */
+function showPolicyStatus(text){
+  const s = document.getElementById('policyStatus');
+  if(s) s.innerText = text;
+}
+function clearPolicyStatus(){
+  const s = document.getElementById('policyStatus');
+  if(s) s.innerText = '';
+}
+
+/* ================= policyRows handler (upload/view/add-row) ================= */
+document.getElementById('policyRows').addEventListener('click', async function(e){
   let row = e.target.closest('.policy-row');
-  if(!row && !e.target.classList.contains('add-row')) return;
+  const addBtn = e.target.closest('.add-row');
 
-  if(e.target.classList.contains('upload-btn')){
-    let fileInput = document.createElement('input');
-    fileInput.type='file';
-    fileInput.accept='application/pdf';
-    fileInput.onchange = ()=>{
-      let file = fileInput.files[0];
-      if(!file) return;
-      let fd = new FormData();
-      fd.append('file', file);
-      fd.append('formType', 'PDF');
-      fd.append('policyType', document.getElementById('policyTitle').innerText || '');
-      fd.append('client','client_id');
-      fd.append('fileName', file.name);
-      fetch(GAS_URL,{method:'POST',body:fd})
-        .then(res=>res.json?.())
-        .then(()=>{ alert('PDF भेज दिया गया!'); if(row.querySelector('.view-btn')) row.querySelector('.view-btn').disabled=false; })
-        .catch(err=>{ console.error(err); alert('Upload failed: '+err); });
-    };
-    fileInput.click();
+  if(!row && !addBtn) return;
 
-  } else if(e.target.classList.contains('view-btn')){
-    const url = row.dataset.pdfurl;
-    if(url) window.open(url,'_blank'); else alert('PDF अभी अपलोड नहीं हुआ।');
-  } else if(e.target.classList.contains('add-row')){
+  if(addBtn){
+    // clone first row
     let firstRow = document.querySelector('.policy-row');
     let newRow = firstRow.cloneNode(true);
     newRow.querySelector('.view-btn').disabled = true;
     newRow.dataset.pdfurl = '';
-    e.target.before(newRow);
+    addBtn.before(newRow);
+    return;
+  }
+
+  // UPLOAD action
+  if(e.target.classList.contains('upload-btn')){
+    const code = document.getElementById('policyCode').value.trim();
+    if(code.length !== 6){ alert("कृपया 6 अंकों का कोड डालें"); return; }
+
+    // select file
+    let fileInput = document.createElement('input');
+    fileInput.type='file';
+    fileInput.accept='application/pdf';
+    fileInput.onchange = async ()=>{
+      let file = fileInput.files[0];
+      if(!file) return;
+
+      // --- check single-page quickly (heuristic) ---
+      try{
+        const arrayBuffer = await file.arrayBuffer();
+        const text = new TextDecoder('latin1').decode(arrayBuffer);
+        const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
+        if(pageMatches > 1){
+          alert("कृपया एक पेज (single-page) PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
+          return;
+        }
+      } catch(err){
+        console.warn("Page check failed:", err);
+        // continue but warn
+      }
+
+      // read as dataURL (base64)
+      showPolicyStatus("Please wait... PDF is being uploaded");
+      const dataUrl = await new Promise((res, rej) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result);
+        fr.onerror = rej;
+        fr.readAsDataURL(file);
+      });
+      const base64 = dataUrl.split(',')[1];
+
+      // prepare payload
+      const popup = document.getElementById('policyPopup');
+      const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
+      const payload = {
+        action: 'uploadPdf',
+        filename: file.name,
+        base64: base64,
+        code: code,
+        policyType: policyType
+      };
+
+      try{
+        const resp = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const jd = await resp.json();
+        clearPolicyStatus();
+        if(jd && jd.result === 'success' && jd.fileUrl){
+          row.dataset.pdfurl = jd.fileUrl;
+          row.querySelector('.view-btn').disabled = false;
+          alert('PDF भेज दिया गया है');
+        } else {
+          alert('Upload failed: server error');
+          console.error('Upload resp', jd);
+        }
+      } catch(err){
+        clearPolicyStatus();
+        console.error(err);
+        alert('Upload failed: '+err);
+      }
+    };
+    fileInput.click();
+  }
+
+  // VIEW action
+  if(e.target.classList.contains('view-btn')){
+    const code = document.getElementById('policyCode').value.trim();
+    if(code.length !== 6){ alert("कृपया 6 अंकों का कोड डालें"); return; }
+    showPolicyStatus("Please wait — fetching policy...");
+    const popup = document.getElementById('policyPopup');
+    const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
+
+    try{
+      const resp = await fetch(GAS_URL + '?action=getPdf&code=' + encodeURIComponent(code) + '&policyType=' + encodeURIComponent(policyType));
+      const jd = await resp.json();
+      clearPolicyStatus();
+      if(jd && jd.fileUrl){
+        window.open(jd.fileUrl, '_blank');
+      } else {
+        alert('इस कोड से कोई PDF नहीं मिली।');
+      }
+    } catch(err){
+      clearPolicyStatus();
+      console.error(err);
+      alert('Error fetching policy: '+err);
+    }
   }
 });
 
-/* ----- MF popup (existing element #mfPopup) ----- */
+/* ================= MF & Recommend forms (as before) ================= */
 function openMFForm(){
   const popup = document.getElementById('mfPopup');
   if(!popup) return alert('MF popup element नहीं मिला');
@@ -308,14 +371,12 @@ function openMFForm(){
 document.getElementById('mfForm').addEventListener('submit', function(e){
   e.preventDefault();
   let fd = new FormData(this);
-  // ensure a formType for sheet
   fd.append('formType','MF');
   fetch(GAS_URL,{method:'POST',body:fd})
     .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('mfPopup').style.display='none'; })
     .catch(err=>{ console.error(err); alert('Error: '+err); });
 });
 
-/* ----- Recommend popup (existing element #recommendPopup) ----- */
 function openRecommendForm(){
   const popup = document.getElementById('recommendPopup');
   if(!popup) return alert('Recommend popup element नहीं मिला');
@@ -333,14 +394,12 @@ document.getElementById('recommendForm').addEventListener('submit', function(e){
     .catch(err=>{ console.error(err); alert('Error: '+err); });
 });
 
-/* ----- On page load: if some popups are already visible, ensure they have close button ----- */
+/* ================= On DOM ready: ensure close buttons exist ================= */
 document.addEventListener('DOMContentLoaded', function(){
   ['policyPopup','mfPopup','recommendPopup'].forEach(id=>{
     const el = document.getElementById(id);
-    if(el) {
-      // make sure popup has relative/positioned context
+    if(el){
       if(getComputedStyle(el).position === 'static') el.style.position = 'fixed';
-      // attach close button if not present
       makeCloseButton(el, ()=> el.style.display = 'none');
     }
   });
@@ -349,6 +408,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </body>
 </html>
+
 
 
 
