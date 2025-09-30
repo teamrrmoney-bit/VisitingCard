@@ -267,76 +267,72 @@ document.getElementById('policyRows').addEventListener('click', async function(e
     if(code.length !== 6){ alert("कृपया 6 अंकों का कोड डालें"); return; }
 
     // select file
-    let fileInput = document.createElement('input');
-    fileInput.type='file';
-    fileInput.accept='application/pdf';
-    fileInput.onchange = async ()=>{
-      let file = fileInput.files[0];
-       if (file.size > 5 * 1024 * 1024) {
+  let fileInput = document.createElement('input');
+fileInput.type='file';
+fileInput.accept='application/pdf';
+fileInput.onchange = async ()=>{
+  let file = fileInput.files[0];
+  if(!file) return;
+
+  // size limit 5 MB
+  if (file.size > 5 * 1024 * 1024) {
     alert("कृपया 5 MB से छोटी PDF ही अपलोड करें। आपकी फ़ाइल का आकार: " + (file.size / (1024*1024)).toFixed(2) + " MB");
     return;
   }
 
-      // --- check single-page quickly (heuristic) ---
-      try{
-       const arrayBuffer = await file.arrayBuffer();
-const text = new TextDecoder('latin1').decode(arrayBuffer);
-const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
-if (pageMatches > 3) {
-  alert("कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
-  return;
-}
-
-          } catch(err){
-        console.warn("Page check failed:", err);
-        // continue but warn
-      }
-
-      // read as dataURL (base64)
-      showPolicyStatus("Please wait... PDF is being uploaded");
-      const dataUrl = await new Promise((res, rej) => {
-        const fr = new FileReader();
-        fr.onload = () => res(fr.result);
-        fr.onerror = rej;
-        fr.readAsDataURL(file);
-      });
-      const base64 = dataUrl.split(',')[1];
-
-      // prepare payload
-      const popup = document.getElementById('policyPopup');
-      const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
-      const payload = {
-        action: 'uploadPdf',
-        filename: file.name,
-        base64: base64,
-        code: code,
-        policyType: policyType
-      };
-
-      try{
-        const resp = await fetch(GAS_URL, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        const jd = await resp.json();
-        clearPolicyStatus();
-        if(jd && jd.result === 'success' && jd.fileUrl){
-          row.dataset.pdfurl = jd.fileUrl;
-          row.querySelector('.view-btn').disabled = false;
-          alert('PDF भेज दिया गया है');
-        } else {
-          alert('Upload failed: server error');
-          console.error('Upload resp', jd);
-        }
-      } catch(err){
-        clearPolicyStatus();
-        console.error(err);
-        alert('Upload failed: '+err);
-      }
-    };
-    fileInput.click();
+  // --- check pages limit 3 pages ---
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const text = new TextDecoder('latin1').decode(arrayBuffer);
+    const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
+    if(pageMatches > 3){
+      alert("कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
+      return;
+    }
+  } catch(err){
+    console.warn("Page check failed:", err);
+    // continue but warn
   }
+
+  // read file as base64
+  showPolicyStatus("Please wait... PDF is being uploaded");
+  const arrayBuffer = await file.arrayBuffer();
+  const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+
+  const popup = document.getElementById('policyPopup');
+  const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
+  const payload = {
+    action: 'uploadPdf',
+    filename: file.name,
+    base64: base64,
+    code: code, // 6-digit code defined elsewhere
+    policyType: policyType
+  };
+
+  try{
+    const resp = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const jd = await resp.json();
+    clearPolicyStatus();
+    if(jd && jd.result === 'success' && jd.fileUrl){
+      row.dataset.pdfurl = jd.fileUrl;
+      row.querySelector('.view-btn').disabled = false;
+      alert('PDF भेज दिया गया है');
+    } else {
+      alert('Upload failed: server error');
+      console.error('Upload resp', jd);
+    }
+  } catch(err){
+    clearPolicyStatus();
+    console.error(err);
+    alert('Upload failed: '+err);
+  }
+};
+fileInput.click();
+
 
   // VIEW action
   if(e.target.classList.contains('view-btn')){
@@ -412,6 +408,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </body>
 </html>
+
 
 
 
