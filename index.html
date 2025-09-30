@@ -4,17 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>डिजिटल विजिटिंग कार्ड</title>
-  <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#007bff">
 <style>
 body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; padding:20px; }
 .card { background:#e9f7ff; border-radius:20px; box-shadow:0 6px 15px rgba(0,0,0,0.15); padding:25px; max-width:480px; margin:auto; border:3px solid #007bff; }
-.header { display:flex; align-items:center; justify-content:center; gap:15px; }
+.header { display:flex; align-items:center; justify-content:center; gap:15px; flex-wrap:wrap; }
 .header img { width:110px; height:110px; border-radius:50%; object-fit:cover; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.2);}
-.header-text { text-align:left; display:flex; flex-direction:column; align-items:flex-start; }
+.header-text { text-align:left; display:flex; flex-direction:column; align-items:flex-start; min-width:200px; }
 .header-text h1 { margin:0; font-size:22px; color:#333; }
-.header-text .tags { margin-top:6px; display:flex; gap:8px; font-weight:bold; }
+.header-text .tags { margin-top:6px; display:flex; gap:8px; font-weight:bold; flex-wrap:wrap; }
 .tags span.lic { color:#007bff; } .tags span.mf { color:#28a745; } .tags span.gi { color:#dc3545; }
 .buy-container, .my-container { margin:20px auto; max-width:360px; }
 .buy-container h3, .my-container h3 { margin-bottom:5px; font-size:16px; }
@@ -24,16 +23,17 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 .buy-box button, .my-box button, .recommend-btn { padding:12px; font-size:15px; border:none; border-radius:10px; color:white; cursor:pointer; }
 .btn1{background:#007bff;} .btn2{background:#28a745;} .btn3{background:#17a2b8;} .btn4{background:#ffc107;color:black;} .btn5{background:#dc3545;} .btn6{background:#6f42c1;} .btn7{background:#20c997;} .btn8{background:#fd7e14;} .btn9{background:#6610f2;} .btn10{background:#e83e8c;}
 .recommend-btn { background:#e83e8c; margin-top:15px; width:90%; }
-.form-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.3); z-index:999; width:300px; }
+.form-popup { display:none; background:white; padding:20px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.3); z-index:999; max-width:95%; margin:auto; }
 .form-popup input, .form-popup select { width:100%; padding:8px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
 .form-popup button { width:100%; padding:10px; background:green; color:white; border:none; border-radius:10px; }
+.popup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999; }
+.closeBtn { position:absolute; top:8px; right:8px; width:34px; height:34px; border-radius:50%; border:none; background:#f5f5f5; color:#222; font-size:18px; line-height:1; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.25); z-index:10001; }
 @media(max-width:420px){ .header img{width:80px;height:80px;} .header-text h1{font-size:18px;} .tags span{font-size:12px;gap:6px;} .card{max-width:360px;padding:16px;} }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <!-- Header -->
  <div class="header">
   <img src="MyPhoto.jpg" alt="आपका फोटो">
   <div class="header-text">
@@ -46,19 +46,14 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
     <p style="margin:5px 0 0 0;font-size:14px;color:#333;line-height:1.6;">
       <a href="tel:9868920766" style="text-decoration:none;color:inherit;">📞 9868920766</a>
       <a href="https://wa.me/7878787878" target="_blank" style="margin-left:6px;text-decoration:none;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-             alt="WhatsApp" style="height:18px;width:18px;vertical-align:middle;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="height:18px;width:18px;vertical-align:middle;">
       </a><br>
       <a href="mailto:ram111.2008@rediffmail.com" style="text-decoration:none;color:inherit;">✉️ ram111.2008@rediffmail.com</a>
     </p>
-    <a href="mycontact.vcf" download
-       style="display:inline-block;margin-top:5px; padding:5px 10px;font-size:13px; background:#28a745;color:white; border-radius:6px;text-decoration:none;">
-      Save Contact
-    </a>
+    <a href="mycontact.vcf" download style="display:inline-block;margin-top:5px; padding:5px 10px;font-size:13px; background:#28a745;color:white; border-radius:6px;text-decoration:none;">Save Contact</a>
   </div>
 </div>
 
-<!-- Buy Buttons -->
 <div class="buy-container">
   <h3>To Buy Click the button</h3>
   <span class="arrow-down">👇</span>
@@ -72,7 +67,6 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
   </div>
 </div>
 
-<!-- To View Buttons -->
 <div class="my-container">
   <h3>To View Click the button</h3>
   <span class="arrow-down">👇</span>
@@ -84,21 +78,10 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
   </div>
 </div>
 
-<!-- Recommend Button -->
 <button class="recommend-btn" onclick="openRecommendForm()">Recommend and earn Rs. 200 to Rs.1000 on every lead</button>
 
-<!-- Policy Popup (updated: includes 6-digit code, status, single-page check) -->
-<div class="form-popup" id="policyPopup" data-policy-type="">
+<div class="form-popup" id="policyPopup">
   <h3 id="policyTitle">अपना पॉलिसी विवरण अपलोड करें</h3>
-
-  <!-- 6-अंकों का कोड: यह अनिवार्य है (upload & view दोनों के लिए) -->
-  <input type="text" id="policyCode" maxlength="6"
-         placeholder="6 अंकों का कोड डालें (अवश्यक)"
-         style="width:100%;padding:8px;margin:8px 0;border-radius:6px;border:1px solid #ccc;">
-
-  <!-- स्थिति/स्टेटस दिखाने के लिए -->
-  <div id="policyStatus" style="font-size:13px;color:#333;margin:6px 0; min-height:18px;"></div>
-
   <div id="policyRows">
     <div class="policy-row" style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
       <button class="upload-btn" style="background:red; color:white; flex:1;">UPLOAD PDF</button>
@@ -108,8 +91,6 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
   </div>
 </div>
 
-
-<!-- MF Form -->
 <div class="form-popup" id="mfPopup">
   <h3>कृपया मुझे मेरे Mutual Funds Folios देखने के लिए अपना App देने की कृपा करें</h3>
   <form id="mfForm">
@@ -127,7 +108,6 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
   </form>
 </div>
 
-<!-- Recommend Form -->
 <div class="form-popup" id="recommendPopup">
   <h3>Recommend & Earn Form</h3>
   <form id="recommendForm">
@@ -152,45 +132,34 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec'; // आपका Apps Script URL (यदि बदलें तो यहाँ अपडेट करें)
+const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
-/* ================= helper functions ================= */
 function makeCloseButton(container, onClose){
   if(container.querySelector('.closeBtn')) return;
   let close = document.createElement('button');
-  close.type = 'button';
-  close.className = 'closeBtn';
+  close.type='button';
+  close.className='closeBtn';
   close.setAttribute('aria-label','Close');
-  close.innerHTML = '✕';
-  Object.assign(close.style, {
-    position: 'absolute', top: '8px', right: '8px', width: '34px', height: '34px',
-    borderRadius: '50%', border: 'none', background: '#f5f5f5', color: '#222', fontSize: '18px',
-    cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.25)', zIndex: 10001
-  });
+  close.innerHTML='✕';
   close.addEventListener('click', function(e){
     e.stopPropagation();
-    try { onClose(); } catch(err){ container.style.display = 'none'; }
+    try { onClose(); } catch(err){ container.style.display='none'; }
   });
   container.appendChild(close);
 }
 
 function closeAllPopups(){
-  document.querySelectorAll('.popup-overlay').forEach(o => o.remove());
-  document.querySelectorAll('.form-popup').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.popup-overlay').forEach(o=>o.remove());
+  document.querySelectorAll('.form-popup').forEach(p=>p.style.display='none');
 }
-document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllPopups(); });
 
-/* ================= open simple forms (unchanged) ================= */
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAllPopups(); });
+
 function openForm(service){
-  const overlay = document.createElement('div');
-  overlay.className = 'popup-overlay';
-  Object.assign(overlay.style, { position:'fixed', top:0, left:0, width:'100%', height:'100%',
-    background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center', zIndex:9999 });
-
+  const overlay = document.createElement('div'); overlay.className='popup-overlay';
   const box = document.createElement('div');
-  box.style.cssText = 'background:#fff;padding:20px;max-width:420px;width:94%;position:relative;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.15);';
-  box.innerHTML = `
-    <h3 style="margin-top:0;font-size:18px;">${service} के लिए विवरण भरें</h3>
+  box.style.cssText='background:#fff;padding:20px;max-width:420px;width:94%;position:relative;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.15);';
+  box.innerHTML=`<h3 style="margin-top:0;font-size:18px;">${service} के लिए विवरण भरें</h3>
     <form class="tempForm" style="margin-top:8px;">
       <input type="hidden" name="formType" value="${service}">
       <input type="text" name="name" placeholder="आपका नाम" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
@@ -198,222 +167,70 @@ function openForm(service){
       <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
       <select name="time" required style="width:100%;margin-bottom:12px;padding:8px;border-radius:6px;border:1px solid #ccc;">
         <option value="">कॉल करने का सही समय</option>
-        <option>सुबह</option>
-        <option>दोपहर</option>
-        <option>शाम</option>
+        <option>सुबह</option><option>दोपहर</option><option>शाम</option>
       </select>
       <button type="submit" style="background:#007bff;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;">सबमिट</button>
-    </form>
-  `;
+    </form>`;
   overlay.appendChild(box); document.body.appendChild(overlay);
-  makeCloseButton(box, ()=> overlay.remove());
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.remove(); });
+  makeCloseButton(box, ()=>overlay.remove());
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
 
-  const form = box.querySelector('.tempForm');
+  const form=box.querySelector('.tempForm');
   form.addEventListener('submit', function(e){
     e.preventDefault();
     const fd = new FormData(this);
-    fd.append('formType', service);
-    fetch(GAS_URL, { method:'POST', body: fd })
-      .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); overlay.remove(); })
+    fd.append('formType',service);
+    fetch(GAS_URL,{method:'POST',body:fd})
+      .then(res=>res.json?.()).then(()=>{ alert('आपका विवरण भेज दिया गया है!'); overlay.remove(); })
       .catch(err=>{ console.error(err); alert('Error: '+err); });
   });
 }
 
-/* ================= Policy popup open ================= */
 function openPolicyPopup(policyType){
-  const popup = document.getElementById('policyPopup');
+  const popup=document.getElementById('policyPopup');
   if(!popup) return alert('Policy popup element नहीं मिला');
-  popup.style.display = 'block';
-  popup.style.position = 'fixed';
-  popup.style.zIndex = 9999;
-  // store policy type (used for upload/view)
-  popup.dataset.policyType = policyType || '';
-  document.getElementById('policyTitle').innerText = policyType || 'Policy';
-  document.getElementById('policyStatus').innerText = '';
-  makeCloseButton(popup, ()=> popup.style.display = 'none');
+  popup.style.display='block'; popup.style.position='fixed'; popup.style.zIndex=9999;
+  document.getElementById('policyTitle').innerText=policyType+' Policy Upload';
+  makeCloseButton(popup, ()=>popup.style.display='none');
 }
 
-/* ================= Helper: status messages in popup ================= */
-function showPolicyStatus(text){
-  const s = document.getElementById('policyStatus');
-  if(s) s.innerText = text;
-}
-function clearPolicyStatus(){
-  const s = document.getElementById('policyStatus');
-  if(s) s.innerText = '';
-}
-
-/* ================= policyRows handler (upload/view/add-row) ================= */
-document.getElementById('policyRows').addEventListener('click', async function(e){
-  let row = e.target.closest('.policy-row');
-  const addBtn = e.target.closest('.add-row');
-
-  if(!row && !addBtn) return;
-
-  if(addBtn){
-    // clone first row
-    let firstRow = document.querySelector('.policy-row');
-    let newRow = firstRow.cloneNode(true);
-    newRow.querySelector('.view-btn').disabled = true;
-    newRow.dataset.pdfurl = '';
-    addBtn.before(newRow);
-    return;
-  }
-
-  // UPLOAD action
+document.getElementById('policyRows').addEventListener('click', function(e){
+  let row=e.target.closest('.policy-row');
+  if(!row && !e.target.classList.contains('add-row')) return;
   if(e.target.classList.contains('upload-btn')){
-    const code = document.getElementById('policyCode').value.trim();
-    if(code.length !== 6){ alert("कृपया 6 अंकों का कोड डालें"); return; }
-
-    // select file
-  let fileInput = document.createElement('input');
-fileInput.type='file';
-fileInput.accept='application/pdf';
-fileInput.onchange = async ()=>{
-  let file = fileInput.files[0];
-  if(!file) return;
-
-  // size limit 5 MB
-  if (file.size > 5 * 1024 * 1024) {
-    alert("कृपया 5 MB से छोटी PDF ही अपलोड करें। आपकी फ़ाइल का आकार: " + (file.size / (1024*1024)).toFixed(2) + " MB");
-    return;
-  }
-
-  // --- check pages limit 3 pages ---
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const text = new TextDecoder('latin1').decode(arrayBuffer);
-    const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
-    if(pageMatches > 3){
-      alert("कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
-      return;
-    }
-  } catch(err){
-    console.warn("Page check failed:", err);
-    // continue but warn
-  }
-
-  // read file as base64
-  showPolicyStatus("Please wait... PDF is being uploaded");
-  const arrayBuffer = await file.arrayBuffer();
-  const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-
-  const popup = document.getElementById('policyPopup');
-  const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
-  const payload = {
-    action: 'uploadPdf',
-    filename: file.name,
-    base64: base64,
-    code: code, // 6-digit code defined elsewhere
-    policyType: policyType
-  };
-
-  try{
-    const resp = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    const jd = await resp.json();
-    clearPolicyStatus();
-    if(jd && jd.result === 'success' && jd.fileUrl){
-      row.dataset.pdfurl = jd.fileUrl;
-      row.querySelector('.view-btn').disabled = false;
-      alert('PDF भेज दिया गया है');
-    } else {
-      alert('Upload failed: server error');
-      console.error('Upload resp', jd);
-    }
-  } catch(err){
-    clearPolicyStatus();
-    console.error(err);
-    alert('Upload failed: '+err);
-  }
-};
-fileInput.click();
-
-
-  // VIEW action
-  if(e.target.classList.contains('view-btn')){
-    const code = document.getElementById('policyCode').value.trim();
-    if(code.length !== 6){ alert("कृपया 6 अंकों का कोड डालें"); return; }
-    showPolicyStatus("Please wait — fetching policy...");
-    const popup = document.getElementById('policyPopup');
-    const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
-
-    try{
-      const resp = await fetch(GAS_URL + '?action=getPdf&code=' + encodeURIComponent(code) + '&policyType=' + encodeURIComponent(policyType));
-      const jd = await resp.json();
-      clearPolicyStatus();
-      if(jd && jd.fileUrl){
-        window.open(jd.fileUrl, '_blank');
-      } else {
-        alert('इस कोड से कोई PDF नहीं मिली।');
-      }
-    } catch(err){
-      clearPolicyStatus();
-      console.error(err);
-      alert('Error fetching policy: '+err);
-    }
+    let fileInput=document.createElement('input'); fileInput.type='file'; fileInput.accept='application/pdf';
+    fileInput.onchange=()=>{
+      let file=fileInput.files[0]; if(!file) return;
+      let fd=new FormData();
+      fd.append('file',file); fd.append('formType','PDF');
+      fd.append('policyType',document.getElementById('policyTitle').innerText||'');
+      fd.append('client','client_id'); fd.append('fileName',file.name);
+      fetch(GAS_URL,{method:'POST',body:fd})
+        .then(res=>res.json?.()).then(()=>{ alert('PDF भेज दिया गया!'); if(row.querySelector('.view-btn')) row.querySelector('.view-btn').disabled=false; })
+        .catch(err=>{ console.error(err); alert('Upload failed: '+err); });
+    }; fileInput.click();
+  } else if(e.target.classList.contains('view-btn')){
+    const url=row.dataset.pdfurl;
+    if(url) window.open(url,'_blank'); else alert('PDF अभी अपलोड नहीं हुआ।');
+  } else if(e.target.classList.contains('add-row')){
+    let firstRow=document.querySelector('.policy-row');
+    let newRow=firstRow.cloneNode(true); newRow.querySelector('.view-btn').disabled=true; newRow.dataset.pdfurl='';
+    e.target.before(newRow);
   }
 });
 
-/* ================= MF & Recommend forms (as before) ================= */
-function openMFForm(){
-  const popup = document.getElementById('mfPopup');
-  if(!popup) return alert('MF popup element नहीं मिला');
-  popup.style.display = 'block';
-  popup.style.position = 'fixed';
-  popup.style.zIndex = 9999;
-  makeCloseButton(popup, ()=> popup.style.display='none');
-}
-document.getElementById('mfForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  let fd = new FormData(this);
-  fd.append('formType','MF');
-  fetch(GAS_URL,{method:'POST',body:fd})
-    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('mfPopup').style.display='none'; })
-    .catch(err=>{ console.error(err); alert('Error: '+err); });
-});
+function openMFForm(){ const popup=document.getElementById('mfPopup'); if(!popup) return alert('MF popup element नहीं मिला'); popup.style.display='block'; popup.style.position='fixed'; popup.style.zIndex=9999; makeCloseButton(popup, ()=>popup.style.display='none'); }
+document.getElementById('mfForm').addEventListener('submit', function(e){ e.preventDefault(); let fd=new FormData(this); fd.append('formType','MF'); fetch(GAS_URL,{method:'POST',body:fd}).then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('mfPopup').style.display='none'; }).catch(err=>{ console.error(err); alert('Error: '+err); }); });
 
-function openRecommendForm(){
-  const popup = document.getElementById('recommendPopup');
-  if(!popup) return alert('Recommend popup element नहीं मिला');
-  popup.style.display = 'block';
-  popup.style.position = 'fixed';
-  popup.style.zIndex = 9999;
-  makeCloseButton(popup, ()=> popup.style.display='none');
-}
-document.getElementById('recommendForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  let fd = new FormData(this);
-  fd.append('formType','Recommend');
-  fetch(GAS_URL,{method:'POST',body:fd})
-    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('recommendPopup').style.display='none'; })
-    .catch(err=>{ console.error(err); alert('Error: '+err); });
-});
+function openRecommendForm(){ const popup=document.getElementById('recommendPopup'); if(!popup) return alert('Recommend popup element नहीं मिला'); popup.style.display='block'; popup.style.position='fixed'; popup.style.zIndex=9999; makeCloseButton(popup, ()=>popup.style.display='none'); }
+document.getElementById('recommendForm').addEventListener('submit', function(e){ e.preventDefault(); let fd=new FormData(this); fd.append('formType','Recommend'); fetch(GAS_URL,{method:'POST',body:fd}).then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('recommendPopup').style.display='none'; }).catch(err=>{ console.error(err); alert('Error: '+err); }); });
 
-/* ================= On DOM ready: ensure close buttons exist ================= */
 document.addEventListener('DOMContentLoaded', function(){
   ['policyPopup','mfPopup','recommendPopup'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el){
-      if(getComputedStyle(el).position === 'static') el.style.position = 'fixed';
-      makeCloseButton(el, ()=> el.style.display = 'none');
-    }
+    const el=document.getElementById(id); if(el){ if(getComputedStyle(el).position==='static') el.style.position='fixed'; makeCloseButton(el, ()=>el.style.display='none'); }
   });
 });
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
