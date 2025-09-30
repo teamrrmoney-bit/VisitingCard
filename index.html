@@ -142,28 +142,40 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 </div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec"; // Replace with your deployed web app URL
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec'; // अपना Apps Script URL यहां डालें
 
-// Open Buy Forms
+// ----- Main Form Popup -----
 function openForm(service){
   let popup = document.createElement('div');
   popup.className='form-popup';
-  popup.style.display='block';
-  popup.innerHTML=`<h3>${service} के लिए विवरण भरें</h3>
-    <form class="tempForm">
-      <input type="hidden" name="formType" value="${service}">
-      <input type="text" name="name" placeholder="आपका नाम" required>
-      <input type="email" name="email" placeholder="ईमेल" required>
-      <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required>
-      <select name="time" required>
-        <option value="">कॉल करने का सही समय</option>
-        <option>सुबह</option>
-        <option>दोपहर</option>
-        <option>शाम</option>
-      </select>
-      <button type="submit">सबमिट</button>
-    </form>`;
+  popup.style.cssText=`
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;`;
+
+  popup.innerHTML=`
+    <div style="background:#fff;padding:20px;max-width:400px;width:90%;position:relative;border-radius:10px;">
+      <button type="button" class="closeBtn"
+        style="position:absolute;top:5px;right:8px;border:none;background:transparent;font-size:20px;cursor:pointer;">×</button>
+      <h3 style="margin-top:0;">${service} के लिए विवरण भरें</h3>
+      <form class="tempForm">
+        <input type="hidden" name="formType" value="${service}">
+        <input type="text" name="name" placeholder="आपका नाम" required style="width:100%;margin-bottom:8px;">
+        <input type="email" name="email" placeholder="ईमेल" required style="width:100%;margin-bottom:8px;">
+        <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required style="width:100%;margin-bottom:8px;">
+        <select name="time" required style="width:100%;margin-bottom:8px;">
+          <option value="">कॉल करने का सही समय</option>
+          <option>सुबह</option>
+          <option>दोपहर</option>
+          <option>शाम</option>
+        </select>
+        <button type="submit" style="background:#007bff;color:#fff;padding:8px 15px;border:none;border-radius:4px;cursor:pointer;">सबमिट</button>
+      </form>
+    </div>`;
+
   document.body.appendChild(popup);
+
+  // close button
+  popup.querySelector('.closeBtn').addEventListener('click',()=>popup.remove());
 
   popup.querySelector('.tempForm').addEventListener('submit', function(e){
     e.preventDefault();
@@ -176,10 +188,20 @@ function openForm(service){
   });
 }
 
-// PDF Upload
+// ----- PDF Upload Popup (पहले से HTML में मौजूद है) -----
 function openPolicyPopup(policyType){
-  document.getElementById('policyPopup').style.display='block';
+  const popup = document.getElementById('policyPopup');
+  popup.style.display='block';
   document.getElementById('policyTitle').innerText = policyType + " Policy Upload";
+  // cross button dynamic add
+  if(!popup.querySelector('.closeBtn')){
+    let close=document.createElement('button');
+    close.textContent='×';
+    close.className='closeBtn';
+    close.style.cssText='position:absolute;top:5px;right:8px;border:none;background:transparent;font-size:20px;cursor:pointer;';
+    popup.appendChild(close);
+    close.addEventListener('click',()=>popup.style.display='none');
+  }
 }
 
 document.getElementById('policyRows').addEventListener('click', function(e){
@@ -213,8 +235,20 @@ document.getElementById('policyRows').addEventListener('click', function(e){
   }
 });
 
-// MF Form
-function openMFForm(){ document.getElementById('mfPopup').style.display='block'; }
+// ----- MF Form Popup -----
+function openMFForm(){ 
+  const popup = document.getElementById('mfPopup');
+  popup.style.display='block';
+  // cross button
+  if(!popup.querySelector('.closeBtn')){
+    let close=document.createElement('button');
+    close.textContent='×';
+    close.className='closeBtn';
+    close.style.cssText='position:absolute;top:5px;right:8px;border:none;background:transparent;font-size:20px;cursor:pointer;';
+    popup.appendChild(close);
+    close.addEventListener('click',()=>popup.style.display='none');
+  }
+}
 document.getElementById('mfForm').addEventListener('submit', function(e){
   e.preventDefault();
   let fd = new FormData(this);
@@ -223,8 +257,20 @@ document.getElementById('mfForm').addEventListener('submit', function(e){
     .catch(err=>alert('Error: '+err));
 });
 
-// Recommend Form
-function openRecommendForm(){ document.getElementById('recommendPopup').style.display='block'; }
+// ----- Recommend Form Popup -----
+function openRecommendForm(){ 
+  const popup = document.getElementById('recommendPopup');
+  popup.style.display='block';
+  // cross button
+  if(!popup.querySelector('.closeBtn')){
+    let close=document.createElement('button');
+    close.textContent='×';
+    close.className='closeBtn';
+    close.style.cssText='position:absolute;top:5px;right:8px;border:none;background:transparent;font-size:20px;cursor:pointer;';
+    popup.appendChild(close);
+    close.addEventListener('click',()=>popup.style.display='none');
+  }
+}
 document.getElementById('recommendForm').addEventListener('submit', function(e){
   e.preventDefault();
   let fd = new FormData(this);
@@ -234,6 +280,8 @@ document.getElementById('recommendForm').addEventListener('submit', function(e){
     .catch(err=>alert('Error: '+err));
 });
 </script>
+
 </body>
 </html>
+
 
