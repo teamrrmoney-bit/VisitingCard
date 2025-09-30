@@ -145,41 +145,119 @@ body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; pa
 /* ==== Replace your old script block with this whole script ==== */
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzxiyil6-PkUxaxVlpgawB7KROrlTdBVFKPPkrdMdwMUNqnFD-LxN0PAe8SWZqvwQS1hA/exec'; // आपके Apps Script URL
+
+/* helper — बना कर close बटन जोड़ता है */
+function makeCloseButton(container, onClose){
+  if(container.querySelector('.closeBtn')) return; // duplicate से बचना
+  let close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'closeBtn';
+  close.setAttribute('aria-label','Close');
+  close.innerHTML = '✕';
+  Object.assign(close.style, {
+    position: 'absolute',
+    top: '8px',
+    right: '8px',
+    width: '34px',
+    height: '34px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#f5f5f5',
+    color: '#222',
+    fontSize: '18px',
+    lineHeight: '1',
+    cursor: 'pointer',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+    zIndex: 10001
+  });
+  close.addEventListener('click', function(e){
+    e.stopPropagation();
+    try { onClose(); } catch(err){ container.style.display = 'none'; }
+  });
+  container.appendChild(close);
+}
+
+/* Close all visible form-popups and overlays */
+function closeAllPopups(){
+  // dynamic overlays
+  document.querySelectorAll('.popup-overlay').forEach(o => o.remove());
+  // existing form-popup elements
+  document.querySelectorAll('.form-popup').forEach(p => p.style.display = 'none');
+}
+
+/* ESC key closes popups */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeAllPopups();
+});
+
+/* ----- Main dynamic form (Buy / others) ----- */
 function openForm(service){
-  let popup = document.createElement('div');
-  popup.className='form-popup';
-  popup.style.display='block';
-  popup.innerHTML=`<h3>${service} के लिए विवरण भरें</h3>
-    <form class="tempForm">
+  // overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'popup-overlay';
+  Object.assign(overlay.style, {
+    position:'fixed', top:0, left:0, width:'100%', height:'100%',
+    background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center',
+    zIndex:9999
+  });
+
+  // box
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#fff;padding:20px;max-width:420px;width:94%;position:relative;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.15);';
+  box.innerHTML = `
+    <h3 style="margin-top:0;font-size:18px;">${service} के लिए विवरण भरें</h3>
+    <form class="tempForm" style="margin-top:8px;">
       <input type="hidden" name="formType" value="${service}">
-      <input type="text" name="name" placeholder="आपका नाम" required>
-      <input type="email" name="email" placeholder="ईमेल" required>
-      <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required>
-      <select name="time" required>
+      <input type="text" name="name" placeholder="आपका नाम" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <input type="email" name="email" placeholder="ईमेल" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <select name="time" required style="width:100%;margin-bottom:12px;padding:8px;border-radius:6px;border:1px solid #ccc;">
         <option value="">कॉल करने का सही समय</option>
         <option>सुबह</option>
         <option>दोपहर</option>
         <option>शाम</option>
       </select>
-      <button type="submit">सबमिट</button>
-    </form>`;
-  document.body.appendChild(popup);
+      <button type="submit" style="background:#007bff;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;">सबमिट</button>
+    </form>
+  `;
 
-  popup.querySelector('.tempForm').addEventListener('submit', function(e){
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // visible close button inside box
+  makeCloseButton(box, ()=> overlay.remove());
+
+  // click outside box closes popup
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) overlay.remove();
+  });
+
+  // submit
+  const form = box.querySelector('.tempForm');
+  form.addEventListener('submit', function(e){
     e.preventDefault();
-    var fd = new FormData(this);
+    const fd = new FormData(this);
     fd.append('formType', service);
-    fetch(GAS_URL,{method:'POST',body:fd})
-      .then(res=>res.json())
-      .then(()=>{alert('आपका विवरण भेज दिया गया है!'); popup.remove();})
-      .catch(err=>alert('Error: '+err));
+    fetch(GAS_URL, { method:'POST', body: fd })
+      .then(res=>res.json?.() /* if response json */)
+      .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); overlay.remove(); })
+      .catch(err=>{ console.error(err); alert('Error: '+err); });
   });
 }
 
-// PDF Upload
+/* ----- PDF Upload Popup (existing #policyPopup element) ----- */
 function openPolicyPopup(policyType){
-  document.getElementById('policyPopup').style.display='block';
-  document.getElementById('policyTitle').innerText = policyType + " Policy Upload";
+  const popup = document.getElementById('policyPopup');
+  if(!popup) return alert('Policy popup element नहीं मिला');
+  popup.style.display = 'block';
+  popup.style.position = 'fixed'; // ensure positioned ancestor for absolute close btn
+  popup.style.zIndex = 9999;
+  document.getElementById('policyTitle').innerText = policyType + ' Policy Upload';
+
+  // add close button if not present
+  makeCloseButton(popup, ()=> popup.style.display = 'none');
+
+  // clicking outside (escape already handles). If you want click outside to close, we could wrap but existing layout is centered so keep simple.
 }
 
 document.getElementById('policyRows').addEventListener('click', function(e){
@@ -188,50 +266,84 @@ document.getElementById('policyRows').addEventListener('click', function(e){
 
   if(e.target.classList.contains('upload-btn')){
     let fileInput = document.createElement('input');
-    fileInput.type='file'; fileInput.accept='application/pdf';
+    fileInput.type='file';
+    fileInput.accept='application/pdf';
     fileInput.onchange = ()=>{
       let file = fileInput.files[0];
+      if(!file) return;
       let fd = new FormData();
       fd.append('file', file);
       fd.append('formType', 'PDF');
-      fd.append('policyType', document.getElementById('policyTitle').innerText);
+      fd.append('policyType', document.getElementById('policyTitle').innerText || '');
       fd.append('client','client_id');
       fd.append('fileName', file.name);
       fetch(GAS_URL,{method:'POST',body:fd})
-      .then(res=>res.json())
-      .then(()=>{alert('PDF भेज दिया गया!'); row.querySelector('.view-btn').disabled=false;})
-      .catch(err=>alert('Upload failed: '+err));
-    }
+        .then(res=>res.json?.())
+        .then(()=>{ alert('PDF भेज दिया गया!'); if(row.querySelector('.view-btn')) row.querySelector('.view-btn').disabled=false; })
+        .catch(err=>{ console.error(err); alert('Upload failed: '+err); });
+    };
     fileInput.click();
+
   } else if(e.target.classList.contains('view-btn')){
-    alert('PDF view functionality depends on server-side storage.');
+    const url = row.dataset.pdfurl;
+    if(url) window.open(url,'_blank'); else alert('PDF अभी अपलोड नहीं हुआ।');
   } else if(e.target.classList.contains('add-row')){
     let firstRow = document.querySelector('.policy-row');
     let newRow = firstRow.cloneNode(true);
     newRow.querySelector('.view-btn').disabled = true;
+    newRow.dataset.pdfurl = '';
     e.target.before(newRow);
   }
 });
 
-// MF Form
-function openMFForm(){ document.getElementById('mfPopup').style.display='block'; }
+/* ----- MF popup (existing element #mfPopup) ----- */
+function openMFForm(){
+  const popup = document.getElementById('mfPopup');
+  if(!popup) return alert('MF popup element नहीं मिला');
+  popup.style.display = 'block';
+  popup.style.position = 'fixed';
+  popup.style.zIndex = 9999;
+  makeCloseButton(popup, ()=> popup.style.display='none');
+}
 document.getElementById('mfForm').addEventListener('submit', function(e){
   e.preventDefault();
   let fd = new FormData(this);
+  // ensure a formType for sheet
+  fd.append('formType','MF');
   fetch(GAS_URL,{method:'POST',body:fd})
-    .then(()=>{alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('mfPopup').style.display='none';})
-    .catch(err=>alert('Error: '+err));
+    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('mfPopup').style.display='none'; })
+    .catch(err=>{ console.error(err); alert('Error: '+err); });
 });
 
-// Recommend Form
-function openRecommendForm(){ document.getElementById('recommendPopup').style.display='block'; }
+/* ----- Recommend popup (existing element #recommendPopup) ----- */
+function openRecommendForm(){
+  const popup = document.getElementById('recommendPopup');
+  if(!popup) return alert('Recommend popup element नहीं मिला');
+  popup.style.display = 'block';
+  popup.style.position = 'fixed';
+  popup.style.zIndex = 9999;
+  makeCloseButton(popup, ()=> popup.style.display='none');
+}
 document.getElementById('recommendForm').addEventListener('submit', function(e){
   e.preventDefault();
   let fd = new FormData(this);
   fd.append('formType','Recommend');
   fetch(GAS_URL,{method:'POST',body:fd})
-    .then(()=>{alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('recommendPopup').style.display='none';})
-    .catch(err=>alert('Error: '+err));
+    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); this.reset(); document.getElementById('recommendPopup').style.display='none'; })
+    .catch(err=>{ console.error(err); alert('Error: '+err); });
+});
+
+/* ----- On page load: if some popups are already visible, ensure they have close button ----- */
+document.addEventListener('DOMContentLoaded', function(){
+  ['policyPopup','mfPopup','recommendPopup'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) {
+      // make sure popup has relative/positioned context
+      if(getComputedStyle(el).position === 'static') el.style.position = 'fixed';
+      // attach close button if not present
+      makeCloseButton(el, ()=> el.style.display = 'none');
+    }
+  });
 });
 </script>
 
