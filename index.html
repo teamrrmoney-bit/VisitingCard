@@ -272,18 +272,22 @@ document.getElementById('policyRows').addEventListener('click', async function(e
     fileInput.accept='application/pdf';
     fileInput.onchange = async ()=>{
       let file = fileInput.files[0];
-      if(!file) return;
+       if (file.size > 5 * 1024 * 1024) {
+    alert("कृपया 5 MB से छोटी PDF ही अपलोड करें। आपकी फ़ाइल का आकार: " + (file.size / (1024*1024)).toFixed(2) + " MB");
+    return;
+  }
 
       // --- check single-page quickly (heuristic) ---
       try{
-        const arrayBuffer = await file.arrayBuffer();
-        const text = new TextDecoder('latin1').decode(arrayBuffer);
-        const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
-        if(pageMatches > 1){
-          alert("कृपया एक पेज (single-page) PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
-          return;
-        }
-      } catch(err){
+       const arrayBuffer = await file.arrayBuffer();
+const text = new TextDecoder('latin1').decode(arrayBuffer);
+const pageMatches = (text.match(/\/Type\s*\/Page/g) || []).length;
+if (pageMatches > 3) {
+  alert("कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फ़ाइल में " + pageMatches + " पेज दिखे।");
+  return;
+}
+
+          } catch(err){
         console.warn("Page check failed:", err);
         // continue but warn
       }
@@ -408,6 +412,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </body>
 </html>
+
 
 
 
