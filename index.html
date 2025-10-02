@@ -189,27 +189,47 @@ function clearPolicyStatus(){
 }
 
 /* center & make popup visible */
-function showPopup(el){
-  // ensure styles
-  el.style.display = 'block';
-  el.setAttribute('aria-hidden','false');
-  // add close button if missing
-  makeCloseButton(el, ()=> { closeAllPopups(); });
-  // wrap in overlay if not already wrapped
-  if(!document.body.querySelector('.popup-overlay') || document.body.querySelector('.popup-overlay').contains(el) === false){
-    const overlay = openOverlayWith(el);
-    overlay.addEventListener('click', function(evt){
-      if(evt.target === overlay) closeAllPopups();
+// ...existing code...
+
+// Overlay को एक बार बनाएं
+let globalOverlay = null;
+function ensureOverlay() {
+  if (!globalOverlay) {
+    globalOverlay = document.createElement('div');
+    globalOverlay.className = 'popup-overlay';
+    globalOverlay.style.display = 'none';
+    document.body.appendChild(globalOverlay);
+    globalOverlay.addEventListener('click', function(evt){
+      if(evt.target === globalOverlay) closeAllPopups();
     });
   }
-  // ensure scrollable & centered (CSS handles transform center)
+  globalOverlay.style.display = 'flex';
 }
 
-/* hide all popups */
-function closeAllPopups(){
-  document.querySelectorAll('.popup-overlay').forEach(o=>o.remove());
-  document.querySelectorAll('.form-popup').forEach(p=>{ p.style.display='none'; p.setAttribute('aria-hidden','true'); });
+// showPopup को बदलें
+function showPopup(el){
+  ensureOverlay();
+  // सभी popup hide करें
+  document.querySelectorAll('.form-popup').forEach(p=>{
+    p.style.display='none';
+    p.setAttribute('aria-hidden','true');
+  });
+  // popup show करें
+  el.style.display = 'block';
+  el.setAttribute('aria-hidden','false');
+  makeCloseButton(el, ()=> { closeAllPopups(); });
+  el.style.zIndex = '10000';
 }
+
+// hide all popups
+function closeAllPopups(){
+  if(globalOverlay) globalOverlay.style.display = 'none';
+  document.querySelectorAll('.form-popup').forEach(p=>{
+    p.style.display='none';
+    p.setAttribute('aria-hidden','true');
+  });
+}
+
 
 /* ESC closes */
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllPopups(); });
