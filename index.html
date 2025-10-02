@@ -189,47 +189,27 @@ function clearPolicyStatus(){
 }
 
 /* center & make popup visible */
-// ...existing code...
-
-// Overlay को एक बार बनाएं
-let globalOverlay = null;
-function ensureOverlay() {
-  if (!globalOverlay) {
-    globalOverlay = document.createElement('div');
-    globalOverlay.className = 'popup-overlay';
-    globalOverlay.style.display = 'none';
-    document.body.appendChild(globalOverlay);
-    globalOverlay.addEventListener('click', function(evt){
-      if(evt.target === globalOverlay) closeAllPopups();
-    });
-  }
-  globalOverlay.style.display = 'flex';
-}
-
-// showPopup को बदलें
 function showPopup(el){
-  ensureOverlay();
-  // सभी popup hide करें
-  document.querySelectorAll('.form-popup').forEach(p=>{
-    p.style.display='none';
-    p.setAttribute('aria-hidden','true');
-  });
-  // popup show करें
+  // ensure styles
   el.style.display = 'block';
   el.setAttribute('aria-hidden','false');
+  // add close button if missing
   makeCloseButton(el, ()=> { closeAllPopups(); });
-  el.style.zIndex = '10000';
+  // wrap in overlay if not already wrapped
+  if(!document.body.querySelector('.popup-overlay') || document.body.querySelector('.popup-overlay').contains(el) === false){
+    const overlay = openOverlayWith(el);
+    overlay.addEventListener('click', function(evt){
+      if(evt.target === overlay) closeAllPopups();
+    });
+  }
+  // ensure scrollable & centered (CSS handles transform center)
 }
 
-// hide all popups
+/* hide all popups */
 function closeAllPopups(){
-  if(globalOverlay) globalOverlay.style.display = 'none';
-  document.querySelectorAll('.form-popup').forEach(p=>{
-    p.style.display='none';
-    p.setAttribute('aria-hidden','true');
-  });
+  document.querySelectorAll('.popup-overlay').forEach(o=>o.remove());
+  document.querySelectorAll('.form-popup').forEach(p=>{ p.style.display='none'; p.setAttribute('aria-hidden','true'); });
 }
-
 
 /* ESC closes */
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllPopups(); });
