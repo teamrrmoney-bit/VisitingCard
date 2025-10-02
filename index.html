@@ -53,7 +53,7 @@
       </div>
       <p style="margin:5px 0 0 0;font-size:14px;color:#333;line-height:1.6;">
         <a href="tel:9868920766" style="text-decoration:none;color:inherit;">📞 9868920766</a>
-        <a href="https://wa.me/8447983853" target="_blank" style="margin-left:6px;text-decoration:none;">
+        <a href="https://wa.me/7878787878" target="_blank" style="margin-left:6px;text-decoration:none;">
           <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="height:18px;width:18px;vertical-align:middle;">
         </a><br>
         <a href="mailto:ram111.2008@rediffmail.com" style="text-decoration:none;color:inherit;">✉️ ram111.2008@rediffmail.com</a>
@@ -148,7 +148,7 @@
 <script>
 /* ============ CONFIG ============ */
 /* Replace with your deployed Apps Script / Web App URL (it should be the /exec URL) */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzMDT_R_h6pR11dpmUi1j8zkgcG3WcAieAbzyzeyf59EGfWDbveiyNjxwyl3BiPR3NWYQ/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbz2ihNT18XZkYNC60LOBDCki7_vdJ4DnxixG5zwbGQZi5Af9Zj87XeLfMpch_1vijHk/exec';
 
 /* ============ Helpers ============ */
 function makeCloseButton(container, onClose){
@@ -295,77 +295,93 @@ document.getElementById('policyRows').addEventListener('click', async function(e
 
     // select file
     const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'application/pdf';
-    fileInput.onchange = async () => {
-      const file = fileInput.files[0];
-      if(!file) return;
+fileInput.type = 'file';
+fileInput.accept = 'application/pdf';
 
-      // client-side size check 5MB
-      if(file.size > 5 * 1024 * 1024){
-        alert('कृपया 5 MB से छोटी PDF अपलोड करें। आपकी फ़ाइल: ' + (file.size/(1024*1024)).toFixed(2) + ' MB');
-        return;
-      }
+fileInput.onchange = async () => {
+  const file = fileInput.files[0];
+  if(!file) return;
 
-      // page-count heuristic (client-side)
-      try{
-        const ab = await file.arrayBuffer();
-        const text = new TextDecoder('latin1').decode(ab);
-        const pages = (text.match(/\/Type\s*\/Page/g) || []).length;
-        if(pages > 3){
-          alert('कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फाइल में ' + pages + ' पेज हैं।');
-          return;
-        }
-      }catch(err){
-        console.warn('Page-check failed, continuing upload', err);
-      }
+  // size check
+  if(file.size > 5 * 1024 * 1024){
+    alert('कृपया 5 MB से छोटी PDF अपलोड करें। आपकी फ़ाइल: ' + (file.size/(1024*1024)).toFixed(2) + ' MB');
+    return;
+  }
 
-      // read as base64
-      showPolicyStatus('Please wait... PDF is being uploaded');
-      try{
-        const arrayBuffer = await file.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  // page-count check
+  try{
+    const ab = await file.arrayBuffer();
+    const text = new TextDecoder('latin1').decode(ab);
+    const pages = (text.match(/\/Type\s*\/Page/g) || []).length;
+    if(pages > 3){
+      alert('कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फाइल में ' + pages + ' पेज हैं।');
+      return;
+    }
+  }catch(err){
+    console.warn('Page-check failed, continuing upload', err);
+  }
 
-        const popup = document.getElementById('policyPopup');
-        const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
+  // ✅ safer base64 conversion
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      resolve(result.split(',')[1]); // only base64
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 
-        const payload = {
-          action: 'uploadPdf',
-          filename: file.name,
-          base64: base64,
-          code: codeVal,
-          policyType: policyType
-        };
+  showPolicyStatus('Please wait... PDF is being uploaded');
 
-        const resp = await fetch(GAS_URL, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
+  try{
+    const popup = document.getElementById('policyPopup');
+    const policyType = popup?.dataset?.policyType || document.getElementById('policyTitle').innerText || '';
 
-        const jd = await resp.json();
-        clearPolicyStatus();
+    const codeInput = document.getElementById('policyCode');
+    const codeVal = codeInput && codeInput.value.trim();
+    const row = document.querySelector('.policy-row'); // या जिस row पर click हुआ हो
 
-        if(jd && jd.result === 'success' && jd.fileUrl){
-          // enable view button and attach url to row
-          const viewBtn = row.querySelector('.view-btn');
-          if(viewBtn){
-            viewBtn.disabled = false;
-            row.dataset.pdfurl = jd.fileUrl;
-          }
-          alert('PDF भेज दिया गया है');
-        } else {
-          console.error('Upload error', jd);
-          alert('Upload failed: server error');
-        }
-      }catch(err){
-        clearPolicyStatus();
-        console.error(err);
-        alert('Upload failed: ' + err);
-      }
+    const payload = {
+      action: 'uploadPdf',
+      filename: file.name,
+      base64: base64,
+      code: codeVal,
+      policyType: policyType
     };
 
-    fileInput.click();
+    const resp = await fetch(GAS_URL, {
+  method: "POST",
+  body: JSON.stringify(payload),
+  headers: { 
+    "Content-Type": "text/plain"   // ⚠️ यहाँ बदलाव किया
+  }
+});
+
+
+    const jd = await resp.json();
+    clearPolicyStatus();
+
+    if(jd && jd.result === 'success' && jd.fileUrl){
+      const viewBtn = row.querySelector('.view-btn');
+      if(viewBtn){
+        viewBtn.disabled = false;
+        row.dataset.pdfurl = jd.fileUrl;
+      }
+      alert('PDF भेज दिया गया है');
+    } else {
+      console.error('Upload error', jd);
+      alert('Upload failed: server error');
+    }
+  }catch(err){
+    clearPolicyStatus();
+    console.error(err);
+    alert('Upload failed: ' + err.message);
+  }
+};
+
+fileInput.click();
+
     return;
   }
 
@@ -452,9 +468,6 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
-
-
-
 
 
 
