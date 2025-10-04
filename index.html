@@ -18,17 +18,19 @@
   .arrow-down { display:block; font-size:20px; margin-bottom:8px; animation:bounce 1s infinite alternate; }
   @keyframes bounce { from { transform:translateY(0);} to { transform:translateY(5px); } }
   .buy-box, .my-box { border:2px solid #007bff; border-radius:12px; background:#d6f0ff; padding:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .buy-box button, .my-box button, .recommend-btn { padding:12px; font-size:15px; border:none; border-radius:10px; color:white; cursor:pointer; }
-  .btn1{background:#007bff;} .btn2{background:#28a745;} .btn3{background:#17a2b8;} .btn4{background:#ffc107;color:black;} .btn5{background:#dc3545;} .btn6{background:#6f42c1;} .btn7{background:#20c997;} .btn8{background:#fd7e14;} .btn9{background:#6610f2;} .btn10{background:#e83e8c;}
+  .buy-box button, .my-box button, .recommend-btn, .mf-btn { padding:12px; font-size:15px; border:none; border-radius:10px; color:white; cursor:pointer; }
+  .btn1{background:#007bff;} .btn2{background:#28a745;} .btn3{background:#17a2b8;} .btn4{background:#ffc107;color:black;} .btn5{background:#dc3545;} .btn6{background:#6f42c1;} 
+  .btn7{background:#20c997;} .btn8{background:#fd7e14;} 
   .recommend-btn { background:#e83e8c; margin-top:15px; width:90%; }
+  .mf-btn { background:#6610f2; margin-top:10px; width:90%; }
 
-  /* Popup styles (mobile-friendly) */
-  .popup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); display:flex; justify-content:center; align-items:center; z-index:9998; }
+  /* Popup styles */
+  .popup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); display:none; justify-content:center; align-items:center; z-index:9998; }
   .form-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:18px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.25); z-index:9999; width:92%; max-width:420px; max-height:90vh; overflow:auto; }
   .form-popup h3{ margin-top:0; font-size:18px; }
-  .form-popup .row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
-  .form-popup input, .form-popup select { width:100%; padding:8px; margin:8px 0; border-radius:6px; border:1px solid #ccc; box-sizing:border-box; }
-  .form-popup button { padding:10px; border-radius:8px; border:none; cursor:pointer; }
+  .form-popup h4{ margin:10px 0 5px; font-size:15px; }
+  .form-popup input, .form-popup select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; box-sizing:border-box; }
+  .form-popup button { padding:10px; border-radius:8px; border:none; cursor:pointer; background:#007bff; color:white; }
   .closeBtn { position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:50%; border:none; background:#f5f5f5; color:#222; font-size:18px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.2); z-index:10001; }
   #policyStatus{ font-size:13px; color:#333; min-height:18px; margin-bottom:6px; text-align:left; }
 
@@ -42,6 +44,7 @@
 <body>
 
 <div class="card">
+  <!-- Header -->
   <div class="header">
     <img src="MyPhoto.jpg" alt="आपका फोटो">
     <div class="header-text">
@@ -62,6 +65,7 @@
     </div>
   </div>
 
+  <!-- To Buy Buttons -->
   <div class="buy-container">
     <h3>To Buy Click the button</h3>
     <span class="arrow-down">👇</span>
@@ -75,45 +79,61 @@
     </div>
   </div>
 
+  <!-- Briefcase -->
   <div class="my-container">
-    <h3>To View Click the button</h3>
+    <h3>Keep all your policies & investments safe — use this briefcase 👜 👇</h3>
     <span class="arrow-down">👇</span>
     <div class="my-box">
-      <button class="btn7" onclick="openPolicyPopup('LIC')">MY LIC POLICY</button>
-      <button class="btn8" onclick="openPolicyPopup('Vehicle')">MY VEHICLE POLICY</button>
-      <button class="btn9" onclick="openPolicyPopup('Health')">MY HEALTH POLICY</button>
-      <button class="btn10" onclick="openMFForm()">MF FOLIOS</button>
+      <button class="btn7" onclick="openPdfForm('upload')">Upload PDF</button>
+      <button class="btn8" onclick="openPdfForm('view')">View PDF</button>
     </div>
   </div>
 
-  <button class="recommend-btn" onclick="openRecommendForm()">Recommend and earn Rs. 200 to Rs.1000 on every lead</button>
-</div>
-
-<!-- Policy popup: includes 6-digit code input, status, upload & view buttons -->
-<div class="form-popup" id="policyPopup" aria-hidden="true">
-  <h3 id="policyTitle">अपना पॉलिसी विवरण अपलोड करें</h3>
-
-  <label for="policyCode" style="display:block;text-align:left;font-weight:600;">6 अंकों का कोड (अनिवार्य)</label>
-  <input id="policyCode" maxlength="6" placeholder="उदा. 123456" inputmode="numeric" pattern="[0-9]*">
-
-  <div id="policyStatus"></div>
-
-  <div id="policyRows">
-    <div class="policy-row" style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
-      <button class="upload-btn" style="background:red; color:white; flex:1;">UPLOAD PDF</button>
-      <button class="view-btn" style="background:green; color:white; flex:1;" disabled>VIEW POLICY</button>
-    </div>
+  <!-- MF Folios Button -->
+  <div style="margin-top:10px;">
+    <button class="mf-btn" onclick="openMFForm()">MF Folios</button>
   </div>
 
-  <button class="add-row" style="margin-top:10px; border:none; border-radius:50%; width:40px; height:40px; font-size:20px; cursor:pointer;">+</button>
+  <!-- Recommend & Earn Button -->
+  <div style="margin-top:10px;">
+    <button class="recommend-btn" onclick="openRecommendForm()">Recommend & Earn</button>
+  </div>
+
 </div>
 
-<!-- MF popup -->
-<div class="form-popup" id="mfPopup" aria-hidden="true">
+<!-- Popups -->
+<div class="popup-overlay" id="popupOverlay"></div>
+
+<!-- Upload/View PDF Popup -->
+<div class="form-popup" id="pdfPopup">
+  <h3 id="pdfTitle">Upload PDF</h3>
+  <button class="closeBtn" onclick="closeAllPopups()">✕</button>
+  <form id="pdfForm">
+    <input type="text" name="code" placeholder="4 डिजिट कोड" maxlength="4" required>
+    <input type="text" name="mobile" placeholder="मोबाइल नंबर" required>
+    <input type="email" name="email" placeholder="ईमेल" required>
+    <select name="pdfType" required>
+      <option value="">PDF Type चुनें</option>
+      <option>LIC</option>
+      <option>Mutual Funds</option>
+      <option>Vehicle Insurance</option>
+      <option>Health Insurance</option>
+      <option>Travel Insurance</option>
+      <option>PA Policy</option>
+    </select>
+    <input type="file" name="pdfFile" accept="application/pdf" style="display:none;" required>
+    <button type="button" id="selectPdfBtn">Select PDF</button>
+    <span id="selectedFileName" style="font-size:13px;margin-left:10px;"></span>
+    <button type="submit" style="margin-top:10px;">Submit PDF</button>
+  </form>
+</div>
+
+<!-- MF Folios Popup -->
+<div class="form-popup" id="mfPopup">
   <h3>कृपया मुझे मेरे Mutual Funds Folios देखने के लिए अपना App देने की कृपा करें</h3>
+  <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="mfForm">
-    <input type="hidden" name="formType" value="MF">
-    <input type="text" name="name" placeholder="आपका नाम" required>
+    <input type="text" name="name" placeholder="नाम" required>
     <input type="email" name="email" placeholder="ईमेल" required>
     <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required>
     <select name="time" required>
@@ -124,9 +144,10 @@
   </form>
 </div>
 
-<!-- Recommend popup -->
-<div class="form-popup" id="recommendPopup" aria-hidden="true">
+<!-- Recommend & Earn Popup -->
+<div class="form-popup" id="recommendPopup">
   <h3>Recommend & Earn Form</h3>
+  <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="recommendForm">
     <input type="hidden" name="formType" value="Recommend">
     <h4>रिकमेंड किया गया व्यक्ति</h4>
@@ -135,7 +156,10 @@
     <input type="text" name="recommended_mobile" placeholder="मोबाइल नम्बर" required>
     <select name="interest" required>
       <option value="">क्या लेने में रुचि है?</option>
-      <option value="LIC">LIC</option><option value="MF">Mutual Funds</option><option value="Health">Health Policy</option><option value="Vehicle">Vehicle Policy</option>
+      <option value="LIC">LIC</option>
+      <option value="MF">Mutual Funds</option>
+      <option value="Health">Health Policy</option>
+      <option value="Vehicle">Vehicle Policy</option>
     </select>
     <h4>फॉर्म भरने वाला</h4>
     <input type="text" name="your_name" placeholder="आपका नाम" required>
@@ -146,329 +170,138 @@
 </div>
 
 <script>
-/* ============ CONFIG ============ */
-/* Replace with your deployed Apps Script / Web App URL (it should be the /exec URL) */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz2ihNT18XZkYNC60LOBDCki7_vdJ4DnxixG5zwbGQZi5Af9Zj87XeLfMpch_1vijHk/exec';
-
-/* ============ Helpers ============ */
-function makeCloseButton(container, onClose){
-  if(container.querySelector('.closeBtn')) return;
-  let close = document.createElement('button');
-  close.className = 'closeBtn';
-  close.type = 'button';
-  close.innerHTML = '✕';
-  close.addEventListener('click', function(e){
-    e.stopPropagation();
-    try{ onClose(); } catch(err){ container.style.display='none'; }
-  });
-  container.appendChild(close);
-}
-
-// Overlay को एक बार बनाएं
-let globalOverlay = null;
-function ensureOverlay() {
-  if (!globalOverlay) {
-    globalOverlay = document.createElement('div');
-    globalOverlay.className = 'popup-overlay';
-    globalOverlay.style.display = 'none';
-    document.body.appendChild(globalOverlay);
-    globalOverlay.addEventListener('click', function(evt){
-      if(evt.target === globalOverlay) closeAllPopups();
-    });
-  }
-  globalOverlay.style.display = 'flex';
-}
-
-function closeOverlay(overlay){
-  if(!overlay) return;
-  overlay.remove();
-}
-
-/* show status text inside policy popup */
-function showPolicyStatus(text){
-  const s = document.getElementById('policyStatus');
-  if(s) s.innerText = text;
-}
-function clearPolicyStatus(){
-  const s = document.getElementById('policyStatus');
-  if(s) s.innerText = '';
-}
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyXYvtK6D2MDLQfXvLCWxirHRS9K5BrXDvtt28cJeCv_5Fka5m64RNcQcgd1HxpvyBDfw/exec';
+const overlay = document.getElementById('popupOverlay');
 
 function showPopup(el){
-  ensureOverlay();
-  // सभी popup hide करें
-  document.querySelectorAll('.form-popup').forEach(p=>{
-    p.style.display='none';
-    p.setAttribute('aria-hidden','true');
-  });
-  // अगर popup DOM में नहीं है तो append करें
-  if (!document.body.contains(el)) {
-    document.body.appendChild(el);
-  }
-  el.style.display = 'block';
-  el.setAttribute('aria-hidden','false');
-  makeCloseButton(el, ()=> { closeAllPopups(); });
-  el.style.zIndex = '10000';
+  overlay.style.display='flex';
+  document.querySelectorAll('.form-popup').forEach(p=>p.style.display='none');
+  el.style.display='block';
 }
-
-/* hide all popups */
 function closeAllPopups(){
-  if(globalOverlay) globalOverlay.style.display = 'none';
+  overlay.style.display='none';
   document.querySelectorAll('.form-popup').forEach(p=>{
     p.style.display='none';
-    p.setAttribute('aria-hidden','true');
+    // 🧹 popup form reset
+    const form = p.querySelector('form');
+    if(form) form.reset();
+    // 🧹 फाइल का नाम label भी साफ कर दो
+    const fname = p.querySelector('#selectedFileName');
+    if(fname) fname.innerText = "";
   });
 }
 
-/* ESC closes */
-document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAllPopups(); });
+overlay.addEventListener('click', ()=>closeAllPopups());
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAllPopups(); });
 
-/* ============ Forms & popups (unchanged behavior except PDF upload changed to base64 JSON) ============ */
-
-/* open dynamic buy form */
+// To Buy buttons
 function openForm(service){
-  // create popup box (we will reuse openOverlayWith)
   const box = document.createElement('div');
-  box.className = 'form-popup';
-  box.style.maxWidth = '420px';
-  box.innerHTML = `
-    <h3>${service} के लिए विवरण भरें</h3>
-    <form class="tempForm" style="margin-top:8px;">
+  box.className='form-popup';
+  box.innerHTML = `<h3>${service} के लिए विवरण भरें</h3>
+    <button class="closeBtn" onclick="closeAllPopups()">✕</button>
+    <form class="tempForm">
       <input type="hidden" name="formType" value="${service}">
-      <input type="text" name="name" placeholder="आपका नाम" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
-      <input type="email" name="email" placeholder="ईमेल" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
-      <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required style="width:100%;margin-bottom:8px;padding:8px;border-radius:6px;border:1px solid #ccc;">
-      <select name="time" required style="width:100%;margin-bottom:12px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <input type="text" name="name" placeholder="नाम" required>
+      <input type="email" name="email" placeholder="ईमेल" required>
+      <input type="text" name="mobile" placeholder="मोबाइल" required>
+      <select name="time" required>
         <option value="">कॉल करने का सही समय</option>
         <option>सुबह</option><option>दोपहर</option><option>शाम</option>
       </select>
-      <button type="submit" style="background:#007bff;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;">सबमिट</button>
-    </form>
-  `;
+      <button type="submit">सबमिट</button>
+    </form>`;
+  document.body.appendChild(box);
   showPopup(box);
-  makeCloseButton(box, ()=> closeAllPopups());
-  const form = box.querySelector('.tempForm');
-  form.addEventListener('submit', function(e){
+  box.querySelector('form').addEventListener('submit', e=>{
     e.preventDefault();
-    const fd = new FormData(this);
-    fd.append('formType', service);
-    fetch(GAS_URL, { method:'POST', body: fd })
-      .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); closeAllPopups(); })
-      .catch(err=>{ console.error(err); alert('Error: '+err); });
+    const fd = new FormData(e.target);
+    fetch(GAS_URL,{method:'POST',body:fd})
+      .then(()=>{ alert('Sent!'); closeAllPopups(); })
+      .catch(err=>{ console.error(err); alert('Error'); });
   });
 }
 
-/* open policy popup (uses same element in DOM) */
-function openPolicyPopup(policyType){
-  const popup = document.getElementById('policyPopup');
-  if(!popup) return alert('Policy popup element नहीं मिला');
-  document.getElementById('policyTitle').innerText = policyType + ' Policy Upload';
-  // store policyType in dataset for later
-  popup.dataset.policyType = policyType;
-  showPopup(popup);
-}
-
-/* ============ PDF Upload & View (base64 JSON) ============ */
-document.getElementById('policyRows').addEventListener('click', async function(e){
-  const row = e.target.closest('.policy-row');
-  const addBtn = e.target.closest('.add-row');
-
-  if(addBtn){
-    // clone a new row and append
-    const first = document.querySelector('.policy-row');
-    if(!first) return;
-    const newRow = first.cloneNode(true);
-    newRow.querySelector('.view-btn').disabled = true;
-    newRow.dataset.pdfurl = '';
-    document.getElementById('policyRows').appendChild(newRow);
-    return;
-  }
-
-  // UPLOAD
-  if(e.target.classList.contains('upload-btn')){
-    const codeInput = document.getElementById('policyCode');
-    const codeVal = codeInput && codeInput.value.trim();
-    if(!codeVal || codeVal.length !== 6 || !/^\d{6}$/.test(codeVal)){
-      alert('कृपया 6 अंकों का वैध कोड डालें। (केवल अंक)');
-      return;
-    }
-
-    // select file
-    const fileInput = document.createElement('input');
-fileInput.type = 'file';
-fileInput.accept = 'application/pdf';
-
-fileInput.onchange = async () => {
-  const file = fileInput.files[0];
-  if(!file) return;
-
-  // size check
-  if(file.size > 5 * 1024 * 1024){
-    alert('कृपया 5 MB से छोटी PDF अपलोड करें। आपकी फ़ाइल: ' + (file.size/(1024*1024)).toFixed(2) + ' MB');
-    return;
-  }
-
-  // page-count check
-  try{
-    const ab = await file.arrayBuffer();
-    const text = new TextDecoder('latin1').decode(ab);
-    const pages = (text.match(/\/Type\s*\/Page/g) || []).length;
-    if(pages > 3){
-      alert('कृपया अधिकतम 3 पेज तक की PDF अपलोड करें। आपकी फाइल में ' + pages + ' पेज हैं।');
-      return;
-    }
-  }catch(err){
-    console.warn('Page-check failed, continuing upload', err);
-  }
-
-  // ✅ safer base64 conversion
-  const base64 = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      resolve(result.split(',')[1]); // only base64
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-
-  showPolicyStatus('Please wait... PDF is being uploaded');
-
-  try{
-    const popup = document.getElementById('policyPopup');
-    const policyType = popup?.dataset?.policyType || document.getElementById('policyTitle').innerText || '';
-
-    const codeInput = document.getElementById('policyCode');
-    const codeVal = codeInput && codeInput.value.trim();
-    const row = document.querySelector('.policy-row'); // या जिस row पर click हुआ हो
-
-    const payload = {
-      action: 'uploadPdf',
-      filename: file.name,
-      base64: base64,
-      code: codeVal,
-      policyType: policyType
-    };
-
-    const resp = await fetch(GAS_URL, {
-  method: "POST",
-  body: JSON.stringify(payload),
-  headers: { 
-    "Content-Type": "text/plain"   // ⚠️ यहाँ बदलाव किया
-  }
+// MF Folios
+function openMFForm(){ showPopup(document.getElementById('mfPopup')); }
+document.getElementById('mfForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const fd = new FormData(this);
+  try { await fetch(GAS_URL,{method:'POST',body:fd}); alert('Sent!'); closeAllPopups(); }
+  catch(err){ console.error(err); alert('Error'); }
 });
 
+// Recommend
+function openRecommendForm(){ showPopup(document.getElementById('recommendPopup')); }
+document.getElementById('recommendForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const fd = new FormData(this);
+  try { await fetch(GAS_URL,{method:'POST',body:fd}); alert('Sent!'); closeAllPopups(); }
+  catch(err){ console.error(err); alert('Error'); }
+});
 
-    const jd = await resp.json();
-    clearPolicyStatus();
+// PDF Upload/View
+function openPdfForm(mode){ 
+  const popup=document.getElementById('pdfPopup'); 
+  document.getElementById('pdfTitle').innerText = mode==='upload'?'Upload your PDF':'View PDF';
+  popup.dataset.mode=mode;
+  showPopup(popup);
 
-    if(jd && jd.result === 'success' && jd.fileUrl){
-      const viewBtn = row.querySelector('.view-btn');
-      if(viewBtn){
-        viewBtn.disabled = false;
-        row.dataset.pdfurl = jd.fileUrl;
+  if(mode==='view'){
+    // view mode मे code/mobile/email input validate
+    const form = popup.querySelector('form');
+    form.onsubmit = async e=>{
+      e.preventDefault();
+      const code = form.querySelector('input[name="code"]').value;
+      const mobile = form.querySelector('input[name="mobile"]').value;
+      const email = form.querySelector('input[name="email"]')?.value || '';
+      try{
+        const res = await fetch(`${GAS_URL}?action=view&code=${encodeURIComponent(code)}&mobile=${encodeURIComponent(mobile)}&email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        if(data.result==='success' && data.fileUrl){
+          window.open(data.fileUrl,'_blank');
+          closeAllPopups();
+        } else alert('Code/Mobile or Code/Email mismatch!');
+      } catch(err){
+        console.error(err);
+        alert('Error: '+err);
       }
-      alert('PDF भेज दिया गया है');
-    } else {
-      console.error('Upload error', jd);
-      alert('Upload failed: server error');
     }
-  }catch(err){
-    clearPolicyStatus();
-    console.error(err);
-    alert('Upload failed: ' + err.message);
   }
-};
+}
 
-fileInput.click();
+document.getElementById('selectPdfBtn').addEventListener('click',()=>document.querySelector('input[name="pdfFile"]').click());
+document.querySelector('input[name="pdfFile"]').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(file) document.getElementById('selectedFileName').innerText=file.name;
+});
+document.getElementById('pdfForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const form = e.target;
+  const file = form.querySelector('input[name="pdfFile"]').files[0];
+  if(!file) return alert('Please select PDF');
+  if(file.size>5*1024*1024) return alert('5 MB max');
 
-    return;
-  }
-
-  // VIEW
-  if(e.target.classList.contains('view-btn')){
-    const codeInput = document.getElementById('policyCode');
-    const codeVal = codeInput && codeInput.value.trim();
-    if(!codeVal || codeVal.length !== 6 || !/^\d{6}$/.test(codeVal)){
-      alert('कृपया 6 अंकों का वैध कोड डालें। (केवल अंक)');
-      return;
-    }
-
-    const popup = document.getElementById('policyPopup');
-    const policyType = popup.dataset.policyType || document.getElementById('policyTitle').innerText || '';
-
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    const base64 = reader.result.split(',')[1];
+    const fd = new FormData(form);
+    fd.append('base64', base64);
+    fd.append('filename', file.name);  // नया line
     try{
-      showPolicyStatus('Please wait — fetching policy...');
-      const resp = await fetch(GAS_URL + '?action=getPdf&code=' + encodeURIComponent(codeVal) + '&policyType=' + encodeURIComponent(policyType));
-      const jd = await resp.json();
-      clearPolicyStatus();
-      if(jd && jd.fileUrl){
-        // Open in new tab
-        // show message while browser opens
-        showPolicyStatus('Please wait — PDF is being opened...');
-        window.open(jd.fileUrl, '_blank');
-        showPolicyStatus('');
-      } else {
-        alert('इस कोड से कोई PDF नहीं मिली।');
-      }
-    }catch(err){
-      clearPolicyStatus();
+      const res = await fetch(GAS_URL,{method:'POST',body:fd});
+      const data = await res.json();   // response JSON parse
+      if(data.result==='success') alert('PDF uploaded!'); 
+      closeAllPopups();
+    } catch(err){
       console.error(err);
-      alert('Error fetching policy: ' + err);
+      alert('Error: '+err);
     }
-    return;
-  }
-
+  };
+  reader.readAsDataURL(file);
 });
 
-/* MF popup open */
-function openMFForm(){
-  const popup = document.getElementById('mfPopup');
-  if(!popup) return alert('MF popup element नहीं मिला');
-  showPopup(popup);
-}
-
-/* MF form submit */
-document.getElementById('mfForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const fd = new FormData(this);
-  fd.append('formType','MF');
-  fetch(GAS_URL, { method:'POST', body: fd })
-    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); closeAllPopups(); this.reset(); })
-    .catch(err=>{ console.error(err); alert('Error: '+err); });
-});
-
-/* Recommend popup open */
-function openRecommendForm(){
-  const popup = document.getElementById('recommendPopup');
-  if(!popup) return alert('Recommend popup element नहीं मिला');
-  showPopup(popup);
-}
-
-/* Recommend submit */
-document.getElementById('recommendForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const fd = new FormData(this);
-  fd.append('formType','Recommend');
-  fetch(GAS_URL, { method:'POST', body: fd })
-    .then(()=>{ alert('आपका विवरण भेज दिया गया है!'); closeAllPopups(); this.reset(); })
-    .catch(err=>{ console.error(err); alert('Error: '+err); });
-});
-
-/* On DOM ready: ensure static popups have close button available */
-document.addEventListener('DOMContentLoaded', function(){
-  ['policyPopup','mfPopup','recommendPopup'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el){
-      if(getComputedStyle(el).position === 'static') el.style.position = 'fixed';
-      makeCloseButton(el, ()=> closeAllPopups());
-    }
-  });
-});
 </script>
+
 </body>
 </html>
-
-
-
-
