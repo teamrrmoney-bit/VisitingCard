@@ -1,3 +1,4 @@
+<!-- index.html — VCgs1-Fixed (structure preserved) + Addons -->
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -6,6 +7,7 @@
 <title>डिजिटल विजिटिंग कार्ड</title>
 <meta name="theme-color" content="#007bff" />
 <style>
+  /* Styles preserved from original VCgs1-Fixed */
   body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; padding:20px; }
   .card { background:#e9f7ff; border-radius:20px; box-shadow:0 6px 15px rgba(0,0,0,0.15); padding:25px; max-width:480px; margin:auto; border:3px solid #007bff; }
   .header { display:flex; align-items:center; justify-content:center; gap:15px; flex-wrap:wrap; }
@@ -22,9 +24,21 @@
   .btn1{background:#007bff;} .btn2{background:#28a745;} .btn3{background:#17a2b8;} .btn4{background:#ffc107;color:black;} .btn5{background:#dc3545;} .btn6{background:#6f42c1;} 
   .btn7{background:#20c997;} .btn8{background:#fd7e14;} 
   .recommend-btn { background:#e83e8c; margin-top:15px; width:90%; }
-  .mf-btn { background:#6610f2; margin-top:10px; width:90%; }
+  .mf-btn, .pay-lic-btn {
+  
+  /* MF style preserved */
+  padding:12px;
+  font-size:15px;
+  border:none;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+}
 
-  /* Popup styles */
+/* अलग-अलग background colors */
+.mf-btn { background:#6610f2; }
+.pay-lic-btn { background:#007bff; }
+
   .popup-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); display:none; justify-content:center; align-items:center; z-index:9998; }
   .form-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:18px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.25); z-index:9999; width:92%; max-width:420px; max-height:90vh; overflow:auto; }
   .form-popup h3{ margin-top:0; font-size:18px; }
@@ -33,11 +47,9 @@
   .form-popup button { padding:10px; border-radius:8px; border:none; cursor:pointer; background:#007bff; color:white; }
   .closeBtn { position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:50%; border:none; background:#f5f5f5; color:#222; font-size:18px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.2); z-index:10001; }
   #selectedFileName{ font-size:13px; margin-left:10px; display:inline-block; }
-  @media(max-width:420px){
-    .header img{width:80px;height:80px;}
-    .header-text h1{font-size:18px;}
-    .card{max-width:360px;padding:16px;}
-  }
+  .message { font-size:14px; color:green; margin-top:5px; display:block; }
+  .processing { font-size:14px; color:#ff9800; margin-top:5px; }
+  @media(max-width:420px){ .header img{width:80px;height:80px;} .header-text h1{font-size:18px;} .card{max-width:360px;padding:16px;} }
 </style>
 </head>
 <body>
@@ -64,7 +76,7 @@
     </div>
   </div>
 
-  <!-- To Buy Buttons -->
+  <!-- To Buy Buttons (these 6 belong to VC7a sheet) -->
   <div class="buy-container">
     <h3>To Buy Click the button</h3>
     <span class="arrow-down">👇</span>
@@ -88,19 +100,22 @@
     </div>
   </div>
 
-  <!-- MF Folios Button -->
-  <div style="margin-top:10px;">
-    <button class="mf-btn" onclick="openMFForm()">MF Folios</button>
-  </div>
+<!-- MF Folios + Pay LIC Premium Buttons (Side by Side, like VC7a) -->
+<div class="buy-box" style="margin-top:10px;">
+  <button class="mf-btn" onclick="openMFForm()">MF Folios</button>
+  <button class="pay-lic-btn" onclick="window.open('https://ebiz.licindia.in/D2CPM/?_ga=2.186637225.1458300277.1759801256-903306253.1720361504#DirectPay','_blank')">Pay LIC Premium here</button>
+</div>
 
-  <!-- Recommend & Earn Button -->
-  <div style="margin-top:10px;">
-    <button class="recommend-btn" onclick="openRecommendForm()">Recommend & Earn</button>
-  </div>
+
+<!-- Recommend & Earn Button -->
+<div style="margin-top:10px; text-align:center;">
+  <button class="recommend-btn" onclick="openRecommendForm()">Recommend & Earn</button>
+</div>
+
 
 </div>
 
-<!-- Popups -->
+<!-- Popups overlay -->
 <div class="popup-overlay" id="popupOverlay"></div>
 
 <!-- Upload PDF Popup -->
@@ -122,7 +137,7 @@
     </select>
     <input type="file" name="pdfFile" accept="application/pdf" style="display:none;" required>
     <button type="button" id="selectPdfBtnUpload">Select PDF</button>
-    <span id="selectedFileName"></span>
+    <span id="selectedFileName" class="message"></span>
     <button type="submit" style="margin-top:10px;">Upload PDF</button>
   </form>
 </div>
@@ -143,6 +158,7 @@
       <option>Travel Insurance</option>
       <option>PA Policy</option>
     </select>
+    <span id="pdfViewMessage" class="message processing"></span>
     <button type="submit" style="margin-top:10px;">View PDF</button>
   </form>
 </div>
@@ -152,6 +168,8 @@
   <h3>कृपया मुझे मेरे Mutual Funds Folios देखने के लिए अपना App देने की कृपा करें</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="mfForm">
+    <!-- this will map to VC7C_MF sheet -->
+    <input type="hidden" name="formType" value="MF">
     <input type="text" name="name" placeholder="नाम" required>
     <input type="email" name="email" placeholder="ईमेल" required>
     <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required>
@@ -159,6 +177,7 @@
       <option value="">कॉल करने का सही समय</option>
       <option>सुबह</option><option>दोपहर</option><option>शाम</option>
     </select>
+    <span class="processing"></span>
     <button type="submit">सबमिट</button>
   </form>
 </div>
@@ -168,6 +187,7 @@
   <h3>Recommend & Earn Form</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="recommendForm">
+    <!-- this will map to VC7D_RECOMMEND sheet -->
     <input type="hidden" name="formType" value="Recommend">
     <h4>रिकमेंड किया गया व्यक्ति</h4>
     <input type="text" name="recommended_name" placeholder="नाम" required>
@@ -184,14 +204,16 @@
     <input type="text" name="your_name" placeholder="आपका नाम" required>
     <input type="email" name="your_email" placeholder="ईमेल" required>
     <input type="text" name="your_mobile" placeholder="मोबाइल नम्बर" required>
+    <span id="recommendMessage" class="processing"></span>
     <button type="submit">सबमिट</button>
   </form>
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzqo3rui-kiVMjt4sxULPuQociLo_0Lq66RHbj_D9UEmQz2wGmQwzVx835expw1jeAS/exec';
-const overlay = document.getElementById('popupOverlay');
+/* === IMPORTANT: replace with your deployed Web App URL after deploying Code.gs === */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxaKHyIuuYeZ-5aly0MA-9nhtLYb8axtTKzbAE6Sp9C39D8p0dSL2RoeNZjUCmdBH6UlA/exec';
 
+const overlay = document.getElementById('popupOverlay');
 function showPopup(el){
   overlay.style.display='flex';
   document.querySelectorAll('.form-popup').forEach(p=>p.style.display='none');
@@ -205,20 +227,23 @@ function closeAllPopups(){
     if(form) form.reset();
     const fname = p.querySelector('#selectedFileName');
     if(fname) fname.innerText = "";
+    const msg = p.querySelector('.processing, .message');
+    if(msg) msg.textContent = '';
   });
 }
-
 overlay.addEventListener('click', ()=>closeAllPopups());
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAllPopups(); });
 
-// To Buy buttons
+/* === To Buy buttons (these send to VC7a sheet) === */
 function openForm(service){
   const box = document.createElement('div');
   box.className='form-popup';
   box.innerHTML = `<h3>${service} के लिए विवरण भरें</h3>
     <button class="closeBtn" onclick="closeAllPopups()">✕</button>
     <form class="tempForm">
-      <input type="hidden" name="formType" value="${service}">
+      <!-- formType 'VC7a' ensures these go to VC7a sheet -->
+      <input type="hidden" name="formType" value="VC7a">
+      <input type="hidden" name="service" value="${service}">
       <input type="text" name="name" placeholder="नाम" required>
       <input type="email" name="email" placeholder="ईमेल" required>
       <input type="text" name="mobile" placeholder="मोबाइल" required>
@@ -226,91 +251,156 @@ function openForm(service){
         <option value="">कॉल करने का सही समय</option>
         <option>सुबह</option><option>दोपहर</option><option>शाम</option>
       </select>
+      <span class="processing"></span>
       <button type="submit">सबमिट</button>
     </form>`;
   document.body.appendChild(box);
   showPopup(box);
-  box.querySelector('form').addEventListener('submit', e=>{
+  box.querySelector('form').addEventListener('submit', async e=>{
     e.preventDefault();
     const fd = new FormData(e.target);
-    fetch(GAS_URL,{method:'POST',body:fd})
-      .then(()=>{ alert('Sent!'); closeAllPopups(); })
-      .catch(err=>{ console.error(err); alert('Error'); });
+    const msgEl = e.target.querySelector('.processing');
+    msgEl.textContent = '⏳ Processing... Please wait...';
+    try{
+      const res = await fetch(GAS_URL,{method:'POST',body:fd});
+      const data = await res.json();
+      if(data.result === 'success'){ msgEl.textContent = '✅ Form submitted successfully!'; setTimeout(()=>{ closeAllPopups(); box.remove(); },1500); }
+      else { msgEl.textContent = 'Error'; }
+    } catch(err){
+      console.error(err);
+      msgEl.textContent = 'Error';
+    }
   });
 }
 
-// MF Folios
+/* MF Folios (maps to VC7C_MF) */
 function openMFForm(){ showPopup(document.getElementById('mfPopup')); }
 document.getElementById('mfForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const fd = new FormData(this);
-  try { await fetch(GAS_URL,{method:'POST',body:fd}); alert('Sent!'); closeAllPopups(); }
-  catch(err){ console.error(err); alert('Error'); }
+  // ensure formType value triggers VC7C_MF mapping in server
+  fd.set('formType','VC7C_MF');
+  const msgEl = this.querySelector('.processing');
+  msgEl.textContent = '⏳ Processing... Please wait...';
+  try {
+    const res = await fetch(GAS_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
+    else { msgEl.textContent='Error'; }
+  } catch(err){ console.error(err); msgEl.textContent='Error'; }
 });
 
-// Recommend
+/* Recommend (maps to VC7D_RECOMMEND) */
 function openRecommendForm(){ showPopup(document.getElementById('recommendPopup')); }
 document.getElementById('recommendForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const fd = new FormData(this);
-  try { await fetch(GAS_URL,{method:'POST',body:fd}); alert('Sent!'); closeAllPopups(); }
-  catch(err){ console.error(err); alert('Error'); }
+  // ensure formType triggers VC7D_RECOMMEND mapping
+  fd.set('formType','VC7D_RECOMMEND');
+  const msgEl = document.getElementById('recommendMessage');
+  msgEl.textContent = '⏳ Processing... Please wait...';
+  try {
+    const res = await fetch(GAS_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
+    else { msgEl.textContent='Error'; }
+  } catch(err){ console.error(err); msgEl.textContent='Error'; }
 });
 
-// Upload PDF
-document.getElementById('selectPdfBtnUpload').addEventListener('click',()=>document.querySelector('#pdfUploadForm input[name="pdfFile"]').click());
-document.getElementById('pdfUploadForm').addEventListener('submit', async e=>{
+/* Upload PDF: select button shows filename and uploads as base64 (PDF metadata stored in 'PDFs' sheet) */
+const selectPdfBtnUpload = document.getElementById('selectPdfBtnUpload');
+const pdfInputUpload = document.querySelector('#pdfUploadForm input[name="pdfFile"]');
+const selectedFileName = document.getElementById('selectedFileName');
+
+selectPdfBtnUpload.addEventListener('click', ()=> pdfInputUpload.click());
+pdfInputUpload.addEventListener('change', ()=>{
+  const file = pdfInputUpload.files[0];
+  if (file) selectedFileName.textContent = `✅ PDF "${file.name}" selected.`;
+  else selectedFileName.textContent = '';
+});
+
+document.getElementById('pdfUploadForm').addEventListener('submit', async e => {
   e.preventDefault();
   const form = e.target;
-  const file = form.querySelector('input[name="pdfFile"]').files[0];
-  if(!file) return alert('Please select PDF');
-  if(file.size>5*1024*1024) return alert('5 MB max');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const oldText = submitBtn.innerText;
+  submitBtn.disabled = true;
+  submitBtn.innerText = '⏳ Processing... Please wait...';
+
+  const fileInput = form.querySelector('input[name="pdfFile"]');
+  const file = fileInput.files[0];
+  if(!file) {
+    alert('Please select PDF');
+    submitBtn.disabled = false;
+    submitBtn.innerText = oldText;
+    return;
+  }
+  if(file.size > 10*1024*1024) {
+    alert('10 MB max');
+    submitBtn.disabled = false;
+    submitBtn.innerText = oldText;
+    return;
+  }
 
   const reader = new FileReader();
-  reader.onload = async ()=>{
+  reader.onload = async () => {
     const base64 = reader.result.split(',')[1];
     const fd = new FormData(form);
     fd.append('base64', base64);
     fd.append('filename', file.name);
-    try{
-      const res = await fetch(GAS_URL,{method:'POST',body:fd});
+
+    try {
+      const res = await fetch(GAS_URL, { method: 'POST', body: fd });
       const data = await res.json();
-      if(data.result==='success') alert('PDF uploaded!'); 
-      closeAllPopups();
-    } catch(err){
+      if(data.result === 'success') {
+        alert('✅ PDF uploaded successfully!');
+        closeAllPopups();
+      } else {
+        alert('Upload failed');
+      }
+    } catch(err) {
       console.error(err);
       alert('Error: '+err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = oldText;
     }
   };
+
   reader.readAsDataURL(file);
 });
 
-// View PDF
+
+/* View PDF: GET action=view -> server returns fileUrl if match */
 document.getElementById('pdfViewForm').addEventListener('submit', async e=>{
   e.preventDefault();
   const form = e.target;
-  const code = form.querySelector('input[name="code"]').value;
-  const contact = form.querySelector('input[name="contact"]').value;
+  const code = form.querySelector('input[name="code"]').value.trim();
+  const contact = form.querySelector('input[name="contact"]').value.trim();
   const pdfType = form.querySelector('select[name="pdfType"]').value;
+  const msgEl = document.getElementById('pdfViewMessage');
+  msgEl.textContent = '⏳ Processing... Please wait...';
   try{
     const res = await fetch(`${GAS_URL}?action=view&code=${encodeURIComponent(code)}&contact=${encodeURIComponent(contact)}&pdfType=${encodeURIComponent(pdfType)}`);
     const data = await res.json();
-    if(data.result==='success' && data.fileUrl){
-      window.open(data.fileUrl,'_blank');
-      closeAllPopups();
-    } else alert('Code/Contact/Type mismatch!');
+    if(data.result === 'success' && data.fileUrl){
+      const a = document.createElement('a'); a.href = data.fileUrl; a.target = '_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove();
+      msgEl.textContent = '✅ PDF ready!';
+      setTimeout(()=>closeAllPopups(),1500);
+    } else {
+      msgEl.textContent = 'Code/Contact/Type mismatch!';
+    }
   } catch(err){
     console.error(err);
-    alert('Error: '+err);
+    msgEl.textContent = 'Error: '+err;
   }
 });
 
 function openPdfForm(mode){
-  if(mode==='upload') showPopup(document.getElementById('pdfUploadPopup'));
+  if(mode === 'upload') showPopup(document.getElementById('pdfUploadPopup'));
   else showPopup(document.getElementById('pdfViewPopup'));
 }
 </script>
 
 </body>
 </html>
-
