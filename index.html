@@ -6,7 +6,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>डिजिटल विजिटिंग कार्ड</title>
 <meta name="theme-color" content="#007bff" />
+<link rel="manifest" href="manifest.json">
+
+<!-- 🔹 Social Media Preview Tags (Open Graph + Twitter) -->
+<meta property="og:title" content="RAMESH CHAND YADAV - Digital Visiting Card">
+<meta property="og:description" content="LIC | Mutual Funds | General Insurance - Contact: 9868920766">
+<meta property="og:image" content="https://teamrrmoney-bit.github.io/VisitingCard/MyPhoto.jpg">
+<meta property="og:url" content="https://teamrrmoney-bit.github.io/VisitingCard/">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RAMESH CHAND YADAV - Digital Visiting Card">
+<meta name="twitter:description" content="LIC | Mutual Funds | General Insurance - Click to view details.">
+<meta name="twitter:image" content="https://teamrrmoney-bit.github.io/VisitingCard/MyPhoto.jpg">
+
 <style>
+
   /* Styles preserved from original VCgs1-Fixed */
   body { font-family: Arial, sans-serif; background:#f6f9fc; text-align:center; padding:20px; }
   .card { background:#e9f7ff; border-radius:20px; box-shadow:0 6px 15px rgba(0,0,0,0.15); padding:25px; max-width:480px; margin:auto; border:3px solid #007bff; }
@@ -399,6 +414,14 @@ document.getElementById('pdfViewForm').addEventListener('submit', async e=>{
 function openPdfForm(mode){
   if(mode === 'upload') showPopup(document.getElementById('pdfUploadPopup'));
   else showPopup(document.getElementById('pdfViewPopup'));
+}
+</script>
+
+<!-- ✅ Service Worker Registration Script -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+  .then(() => console.log("Service Worker registered"));
 }
 </script>
 
