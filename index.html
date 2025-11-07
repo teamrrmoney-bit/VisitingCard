@@ -308,20 +308,38 @@ document.getElementById('mfForm').addEventListener('submit', async function(e){
 
 /* Recommend (maps to VC7D_RECOMMEND) */
 function openRecommendForm(){ showPopup(document.getElementById('recommendPopup')); }
+
 document.getElementById('recommendForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const fd = new FormData(this);
   // ensure formType triggers VC7D_RECOMMEND mapping
   fd.set('formType','VC7D_RECOMMEND');
+
+  // 🧪 DEBUG: show all fields in console
+  for (let pair of fd.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
   const msgEl = document.getElementById('recommendMessage');
   msgEl.textContent = '⏳ Processing... Please wait...';
+
   try {
-    const res = await fetch(GAS_URL,{method:'POST',body:fd});
+    const res = await fetch(GAS_URL, {method:'POST', body:fd});
     const data = await res.json();
-    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
-    else { msgEl.textContent='Error'; }
-  } catch(err){ console.error(err); msgEl.textContent='Error'; }
+    console.log('Server Response:', data); // 🧪 DEBUG RESPONSE
+
+    if (data.result === 'success') {
+      msgEl.textContent = '✅ Form submitted successfully!';
+      setTimeout(()=>closeAllPopups(),1500);
+    } else {
+      msgEl.textContent = '❌ Error: ' + (data.message || 'Unknown error');
+    }
+  } catch(err){
+    console.error('Fetch Error:', err);
+    msgEl.textContent = 'Error';
+  }
 });
+
 
 /* Upload PDF: select button shows filename and uploads as base64 (PDF metadata stored in 'PDFs' sheet) */
 const selectPdfBtnUpload = document.getElementById('selectPdfBtnUpload');
@@ -428,5 +446,6 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
