@@ -4,22 +4,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RAMESH CHAND YADAV - Financial Advisor</title>
+<title>डिजिटल विजिटिंग कार्ड</title>
 <meta name="theme-color" content="#007bff" />
 <link rel="manifest" href="manifest.json">
 
-<!-- 🔹 Social Media Preview (WhatsApp, Facebook, Twitter) -->
+<!-- 🔹 Social Media Preview Tags (Open Graph + Twitter) -->
 <meta property="og:title" content="RAMESH CHAND YADAV - Digital Visiting Card">
-<meta property="og:description" content="Your trusted partner for financial growth | LIC | Mutual Funds | Insurance | Savings">
+<meta property="og:description" content="LIC | Mutual Funds | General Insurance - Contact: 9868920766">
 <meta property="og:image" content="https://teamrrmoney-bit.github.io/VisitingCard/MyPhoto.jpg">
 <meta property="og:url" content="https://teamrrmoney-bit.github.io/VisitingCard/">
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RAMESH CHAND YADAV - Digital Visiting Card">
-<meta name="twitter:description" content="Your trusted partner for financial growth | LIC | Mutual Funds | Insurance | Savings">
+<meta name="twitter:description" content="LIC | Mutual Funds | General Insurance - Click to view details.">
 <meta name="twitter:image" content="https://teamrrmoney-bit.github.io/VisitingCard/MyPhoto.jpg">
-
 
 <style>
 
@@ -138,13 +137,20 @@
 <div class="form-popup" id="pdfUploadPopup">
   <h3>Upload your PDF</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
-  <form id="pdfUploadForm">
-    <input type="text" name="code" placeholder="4 डिजिट कोड" maxlength="4" required>
-    <input type="text" name="mobile" placeholder="मोबाइल नंबर" required>
-    <input type="email" name="email" placeholder="ईमेल" required>
-    <select name="pdfType" required>
-      <option value="">PDF Type चुनें</option>
-      <option>LIC</option>
+ <form id="pdfUploadForm">
+  <label for="pdfCode">4 डिजिट कोड</label>
+  <input type="text" id="pdfCode" name="code" placeholder="4 डिजिट कोड" maxlength="4" required>
+
+  <label for="pdfMobile">मोबाइल नंबर</label>
+  <input type="text" id="pdfMobile" name="mobile" placeholder="मोबाइल नंबर" required>
+
+  <label for="pdfEmail">ईमेल</label>
+  <input type="email" id="pdfEmail" name="email" placeholder="ईमेल" required>
+
+  <label for="pdfType">PDF Type चुनें</label>
+  <select id="pdfType" name="pdfType" required>
+    <option value="">PDF Type चुनें</option>
+        <option>LIC</option>
       <option>Mutual Funds</option>
       <option>Vehicle Insurance</option>
       <option>Health Insurance</option>
@@ -163,17 +169,22 @@
   <h3>View PDF</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="pdfViewForm">
-    <input type="text" name="code" placeholder="4 डिजिट कोड" maxlength="4" required>
-    <input type="text" name="contact" placeholder="Mobile या Email" required>
-    <select name="pdfType" required>
-      <option value="">PDF Type चुनें</option>
-      <option>LIC</option>
-      <option>Mutual Funds</option>
-      <option>Vehicle Insurance</option>
-      <option>Health Insurance</option>
-      <option>Travel Insurance</option>
-      <option>PA Policy</option>
-    </select>
+  <label for="viewCode">4 डिजिट कोड</label>
+  <input type="text" id="viewCode" name="code" placeholder="4 डिजिट कोड" maxlength="4" required>
+
+  <label for="viewContact">Mobile या Email</label>
+  <input type="text" id="viewContact" name="contact" placeholder="Mobile या Email" required>
+
+  <label for="viewPdfType">PDF Type चुनें</label>
+  <select id="viewPdfType" name="pdfType" required>
+    <option value="">PDF Type चुनें</option>
+    <option>LIC</option>
+    <option>Mutual Funds</option>
+    <option>Vehicle Insurance</option>
+    <option>Health Insurance</option>
+    <option>Travel Insurance</option>
+    <option>PA Policy</option>
+  </select>
     <span id="pdfViewMessage" class="message processing"></span>
     <button type="submit" style="margin-top:10px;">View PDF</button>
   </form>
@@ -184,18 +195,29 @@
   <h3>कृपया मुझे मेरे Mutual Funds Folios देखने के लिए अपना App देने की कृपा करें</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="mfForm">
-    <!-- this will map to VC7C_MF sheet -->
-    <input type="hidden" name="formType" value="MF">
-    <input type="text" name="name" placeholder="नाम" required>
-    <input type="email" name="email" placeholder="ईमेल" required>
-    <input type="text" name="mobile" placeholder="मोबाइल नम्बर" required>
-    <select name="time" required>
-      <option value="">कॉल करने का सही समय</option>
-      <option>सुबह</option><option>दोपहर</option><option>शाम</option>
-    </select>
-    <span class="processing"></span>
-    <button type="submit">सबमिट</button>
-  </form>
+  <!-- this will map to VC7C_MF sheet -->
+  <input type="hidden" name="formType" value="MF">
+
+  <label for="mfName">नाम</label>
+  <input type="text" id="mfName" name="name" placeholder="नाम" required>
+
+  <label for="mfEmail">ईमेल</label>
+  <input type="email" id="mfEmail" name="email" placeholder="ईमेल" required>
+
+  <label for="mfMobile">मोबाइल नम्बर</label>
+  <input type="text" id="mfMobile" name="mobile" placeholder="मोबाइल नम्बर" required>
+
+  <label for="mfTime">कॉल करने का सही समय</label>
+  <select id="mfTime" name="time" required>
+    <option value="">कॉल करने का सही समय</option>
+    <option>सुबह</option>
+    <option>दोपहर</option>
+    <option>शाम</option>
+  </select>
+
+  <span class="processing"></span>
+  <button type="submit">सबमिट</button>
+</form>
 </div>
 
 <!-- Recommend & Earn Popup -->
@@ -203,27 +225,44 @@
   <h3>Recommend & Earn Form</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
   <form id="recommendForm">
-    <!-- this will map to VC7D_RECOMMEND sheet -->
-    <input type="hidden" name="formType" value="Recommend">
-    <h4>रिकमेंड किया गया व्यक्ति</h4>
-    <input type="text" name="recommended_name" placeholder="नाम" required>
-    <input type="email" name="recommended_email" placeholder="ईमेल" required>
-    <input type="text" name="recommended_mobile" placeholder="मोबाइल नम्बर" required>
-    <select name="interest" required>
-      <option value="">क्या लेने में रुचि है?</option>
-      <option value="LIC">LIC</option>
-      <option value="MF">Mutual Funds</option>
-      <option value="Health">Health Policy</option>
-      <option value="Vehicle">Vehicle Policy</option>
-    </select>
+  <!-- this will map to VC7D_RECOMMEND sheet -->
+  <input type="hidden" name="formType" value="recommend">
+
+  <h4>रिकमेंड किया गया व्यक्ति</h4>
+
+  <label for="recName">नाम</label>
+  <input type="text" id="recName" name="recommended_name" placeholder="नाम" required>
+
+  <label for="recEmail">ईमेल</label>
+  <input type="email" id="recEmail" name="recommended_email" placeholder="ईमेल" required>
+
+  <label for="recommended_mobile">मोबाइल नम्बर</label>
+<input type="text" id="recommended_mobile" name="recommended_mobile" placeholder="Enter Mobile No." required>
+
+
+    <label for="interestSelect">क्या लेने में रुचि है?</label>
+<select id="interestSelect" name="interest" required>
+  <option value="">क्या लेने में रुचि है?</option>
+  <option value="LIC">LIC</option>
+  <option value="MF">Mutual Funds</option>
+  <option value="Health">Health Policy</option>
+  <option value="Vehicle">Vehicle Policy</option>
+</select>
     <h4>फॉर्म भरने वाला</h4>
-    <input type="text" name="your_name" placeholder="आपका नाम" required>
-    <input type="email" name="your_email" placeholder="ईमेल" required>
-    <input type="text" name="your_mobile" placeholder="मोबाइल नम्बर" required>
-    <span id="recommendMessage" class="processing"></span>
-    <button type="submit">सबमिट</button>
+
+<label for="yourName">आपका नाम</label>
+<input type="text" id="yourName" name="your_name" placeholder="आपका नाम" required>
+
+<label for="yourEmail">ईमेल</label>
+<input type="email" id="yourEmail" name="your_email" placeholder="ईमेल" required>
+
+<label for="yourMobile">मोबाइल नम्बर</label>
+<input type="text" id="yourMobile" name="your_mobile" placeholder="मोबाइल नम्बर" required>
+
+<span id="recommendMessage" class="processing"></span>
+<button type="submit">सबमिट</button>
   </form>
-</div>
+</div> 
 
 <script>
 /* === IMPORTANT: replace with your deployed Web App URL after deploying Code.gs === */
@@ -243,8 +282,10 @@ function closeAllPopups(){
     if(form) form.reset();
     const fname = p.querySelector('#selectedFileName');
     if(fname) fname.innerText = "";
-    const msg = p.querySelector('.processing, .message');
-    if(msg) msg.textContent = '';
+    // Clear all message/processing elements inside this popup (safer)
+    p.querySelectorAll('.processing, .message').forEach(m => { m.textContent = ''; });
+    // Remove dynamically created forms (from openForm)
+    if(p.classList.contains('tempForm')) p.remove();
   });
 }
 overlay.addEventListener('click', ()=>closeAllPopups());
@@ -253,10 +294,10 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAllPopups();
 /* === To Buy buttons (these send to VC7a sheet) === */
 function openForm(service){
   const box = document.createElement('div');
-  box.className='form-popup';
+  box.className='form-popup tempForm'; // <-- added 'tempForm' so closeAllPopups can remove it
   box.innerHTML = `<h3>${service} के लिए विवरण भरें</h3>
     <button class="closeBtn" onclick="closeAllPopups()">✕</button>
-    <form class="tempForm">
+    <form class="tempFormInner">
       <!-- formType 'VC7a' ensures these go to VC7a sheet -->
       <input type="hidden" name="formType" value="VC7a">
       <input type="hidden" name="service" value="${service}">
@@ -308,38 +349,20 @@ document.getElementById('mfForm').addEventListener('submit', async function(e){
 
 /* Recommend (maps to VC7D_RECOMMEND) */
 function openRecommendForm(){ showPopup(document.getElementById('recommendPopup')); }
-
 document.getElementById('recommendForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const fd = new FormData(this);
   // ensure formType triggers VC7D_RECOMMEND mapping
   fd.set('formType','VC7D_RECOMMEND');
-
-  // 🧪 DEBUG: show all fields in console
-  for (let pair of fd.entries()) {
-    console.log(pair[0] + ': ' + pair[1]);
-  }
-
   const msgEl = document.getElementById('recommendMessage');
   msgEl.textContent = '⏳ Processing... Please wait...';
-
   try {
-    const res = await fetch(GAS_URL, {method:'POST', body:fd});
+    const res = await fetch(GAS_URL,{method:'POST',body:fd});
     const data = await res.json();
-    console.log('Server Response:', data); // 🧪 DEBUG RESPONSE
-
-    if (data.result === 'success') {
-      msgEl.textContent = '✅ Form submitted successfully!';
-      setTimeout(()=>closeAllPopups(),1500);
-    } else {
-      msgEl.textContent = '❌ Error: ' + (data.message || 'Unknown error');
-    }
-  } catch(err){
-    console.error('Fetch Error:', err);
-    msgEl.textContent = 'Error';
-  }
+    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
+    else { msgEl.textContent='Error'; }
+  } catch(err){ console.error(err); msgEl.textContent='Error'; }
 });
-
 
 /* Upload PDF: select button shows filename and uploads as base64 (PDF metadata stored in 'PDFs' sheet) */
 const selectPdfBtnUpload = document.getElementById('selectPdfBtnUpload');
@@ -401,6 +424,13 @@ document.getElementById('pdfUploadForm').addEventListener('submit', async e => {
     }
   };
 
+  // ✅ File read error handler (added)
+  reader.onerror = () => {
+    alert('Failed to read file.');
+    submitBtn.disabled = false;
+    submitBtn.innerText = oldText;
+  };
+
   reader.readAsDataURL(file);
 });
 
@@ -423,6 +453,8 @@ document.getElementById('pdfViewForm').addEventListener('submit', async e=>{
       setTimeout(()=>closeAllPopups(),1500);
     } else {
       msgEl.textContent = 'Code/Contact/Type mismatch!';
+      // UX: close popup after a short delay so user doesn't get stuck
+      setTimeout(()=>closeAllPopups(),2000);
     }
   } catch(err){
     console.error(err);
@@ -446,12 +478,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
