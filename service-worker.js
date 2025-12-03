@@ -1,4 +1,4 @@
-const CACHE_NAME = "visitingcard-v2";
+const CACHE_NAME = "visitingcard-v3";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -7,49 +7,68 @@ const ASSETS_TO_CACHE = [
   "./mycontact.vcf",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./README.md"
+  "./README.md",
+  "./style.css",      // ✅ Add your CSS
+  "./script.js"       // ✅ Add your JS
 ];
 
-// 📦 Install event – files को cache में डालना
+// 📦 INSTALL EVENT – static files cache करना
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// 🔁 Activate event – पुराने cache delete करना
+// 🔁 ACTIVATE EVENT – पुराने cache हटाना
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
+    caches.keys().then(keys =>
+      Promise.all(
         keys.map(key => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
-      );
-    })
+      )
+    )
   );
   self.clients.claim();
 });
 
-// 🌐 Fetch event – पहले cache चेक, फिर network
+// 🌐 FETCH EVENT – पहले cache, फिर network (और dynamic cache)
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      // अगर cache में है तो वही दो, वरना network से लाओ
-      return (
-        response ||
-        fetch(event.request).catch(() => {
-          // अगर offline हो तो fallback दे दो
+    caches.match(event.request).then(cachedResponse => {
+      if (cachedResponse) {
+        // ✅ Cache hit – direct return
+        return cachedResponse;
+      }
+
+      // 🆕 Network से लाओ और dynamic cache में डालो
+      return fetch(event.request)
+        .then(networkResponse => {
+          // केवल valid responses (status 200) को cache करें
+          if (
+            !networkResponse ||
+            networkResponse.status !== 200 ||
+            networkResponse.type !== "basic"
+          ) {
+            return networkResponse;
+          }
+
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+          return networkResponse;
+        })
+        .catch(() => {
+          // ❌ Offline fallback
           if (event.request.destination === "document") {
             return caches.match("./index.html");
           }
-        })
-      );
+        });
     })
   );
 });
