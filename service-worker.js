@@ -1,4 +1,7 @@
-const CACHE_NAME = "visitingcard-v3";
+/* UNIVERSAL SERVICE WORKER — Works on GitHub + VS Code + GAS */
+
+const CACHE_NAME = "visitingcard-universal-v1";
+
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -7,20 +10,25 @@ const ASSETS_TO_CACHE = [
   "./mycontact.vcf",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./README.md",
-  "./style.css",      // ✅ Add your CSS
-  "./script.js"       // ✅ Add your JS
+  "./style.css",
+  "./script.js"
 ];
 
-// 📦 INSTALL EVENT – static files cache करना
+/* ---------------------------------
+   INSTALL → Static Cache
+----------------------------------*/
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
   self.skipWaiting();
 });
 
-// 🔁 ACTIVATE EVENT – पुराने cache हटाना
+/* ---------------------------------
+   ACTIVATE → Old Cache Delete
+----------------------------------*/
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -36,35 +44,40 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-// 🌐 FETCH EVENT – पहले cache, फिर network (और dynamic cache)
+/* ---------------------------------
+   FETCH HANDLER (SAFE MODE)
+----------------------------------*/
 self.addEventListener("fetch", event => {
+
+  const url = new URL(event.request.url);
+
+  // 🚫 RULE 1: Never cache GAS URLs (critical!)
+  if (url.hostname.includes("script.google.com") ||
+      url.hostname.includes("googleusercontent.com")) {
+    return;  // allow normal network request
+  }
+
+  // 🚫 RULE 2: Never cache POST requests (forms)
+  if (event.request.method === "POST") {
+    return; // do not intercept
+  }
+
+  // 🌐 RULE 3: Safe static caching
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      if (cachedResponse) {
-        // ✅ Cache hit – direct return
-        return cachedResponse;
-      }
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
 
-      // 🆕 Network से लाओ और dynamic cache में डालो
       return fetch(event.request)
-        .then(networkResponse => {
-          // केवल valid responses (status 200) को cache करें
-          if (
-            !networkResponse ||
-            networkResponse.status !== 200 ||
-            networkResponse.type !== "basic"
-          ) {
-            return networkResponse;
+        .then(networkRes => {
+          // only cache valid static GET responses
+          if (networkRes && networkRes.status === 200 && networkRes.type === "basic") {
+            const cloned = networkRes.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
           }
-
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-          return networkResponse;
+          return networkRes;
         })
         .catch(() => {
-          // ❌ Offline fallback
+          // offline fallback → open index.html
           if (event.request.destination === "document") {
             return caches.match("./index.html");
           }
