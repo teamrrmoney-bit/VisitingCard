@@ -56,36 +56,49 @@ self.addEventListener("activate", event => {
 });
 
 /* ---------------------------------
-   FETCH HANDLER
+   FETCH HANDLER (SAFE MODE)
 ----------------------------------*/
 self.addEventListener("fetch", event => {
-  const url = new URL(event.request.url);
 
-  // Never cache GAS URLs
-  if (url.hostname.includes("script.google.com") ||
-      url.hostname.includes("googleusercontent.com")) {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // 🚫 RULE 1: Skip GAS URLs
+  if (
+    url.hostname.includes("script.google.com") ||
+    url.hostname.includes("googleusercontent.com")
+  ) {
+    return; // do nothing → allow normal network call
+  }
+
+  // 🚫 RULE 2: Skip POST requests
+  if (request.method === "POST") {
     return;
   }
 
-  // Never intercept POST requests
-  if (event.request.method === "POST") {
-    return;
-  }
-
+  // 🌐 STATIC CACHING
   event.respondWith(
-    caches.match(event.request).then(cached => {
+    caches.match(request).then(cached => {
       if (cached) return cached;
 
-      return fetch(event.request)
-        .then(networkRes => {
-          if (networkRes && networkRes.status === 200 && networkRes.type === "basic") {
+      return fetch(request)
+        .then(response => {
+          // cache only valid static resources
+          if (response && response.status === 200 && response.type === "basic") {
+            const responseToCache = response.clone(); // safe clone
+
             caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, networkRes.clone());
+              cache.put(request, responseToCache);
             });
           }
-          return networkRes;
+          return response;
         })
-        .catch(() => caches.match("./index.html"));
+        .catch(() => {
+          if (request.destination === "document") {
+            return caches.match("./index.html");
+          }
+        });
     })
   );
 });
+
