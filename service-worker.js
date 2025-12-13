@@ -1,18 +1,18 @@
 /* UNIVERSAL SERVICE WORKER — GitHub + GAS Compatible */
 
-const CACHE_NAME = "visitingcard-cache-v3";
+const CACHE_VERSION = "v4";
+const CACHE_NAME = `visitingcard-cache-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [
   "./",
-  "./index.html",
   "./manifest.json",
   "./mycontact.vcf",
 
-  // Icons folder (correct paths)
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/MyPhoto.jpg"
 ];
+
 
 /* ---------------------------------
    INSTALL → Safe caching
