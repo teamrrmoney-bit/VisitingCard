@@ -6,7 +6,7 @@
    ✔ No CORS / POST issues
 ===================================================== */
 
-const CACHE_VERSION = "final-v1";
+const CACHE_VERSION = "final-v2";
 const CACHE_NAME = `vc-cache-${CACHE_VERSION}`;
 
 /* 🔹 Only STATIC files (no HTML hardcoding) */
@@ -65,6 +65,10 @@ self.addEventListener("fetch", event => {
   ) {
     return;
   }
+/* 🚫 RULE 1B: Never cache QR API */
+if (url.hostname.includes("api.qrserver.com")) {
+  return;
+}
 
   /* 🚫 RULE 2: Never cache POST */
   if (req.method !== "GET") {
