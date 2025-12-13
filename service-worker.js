@@ -1,49 +1,46 @@
-/* UNIVERSAL SERVICE WORKER — GitHub + GAS Compatible */
+/* =====================================================
+   FINAL UNIVERSAL SERVICE WORKER
+   ✔ Phone safe
+   ✔ GitHub Pages safe
+   ✔ Google Apps Script (GAS) safe
+   ✔ No CORS / POST issues
+===================================================== */
 
-const CACHE_VERSION = "v4";
-const CACHE_NAME = `visitingcard-cache-${CACHE_VERSION}`;
+const CACHE_VERSION = "final-v1";
+const CACHE_NAME = `vc-cache-${CACHE_VERSION}`;
 
-const ASSETS_TO_CACHE = [
+/* 🔹 Only STATIC files (no HTML hardcoding) */
+const STATIC_ASSETS = [
   "./",
   "./manifest.json",
   "./mycontact.vcf",
-
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/MyPhoto.jpg"
+  "./MyPhoto.jpg"
 ];
 
-
-/* ---------------------------------
-   INSTALL → Safe caching
-----------------------------------*/
+/* ---------------- INSTALL ---------------- */
 self.addEventListener("install", event => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      const results = [];
 
-      for (const asset of ASSETS_TO_CACHE) {
+      for (const asset of STATIC_ASSETS) {
         try {
-          const req = new Request(asset, { cache: "no-cache" });
-          const res = await fetch(req);
-
-          if (res.ok) {
+          const res = await fetch(asset, { cache: "no-store" });
+          if (res && res.ok) {
             await cache.put(asset, res.clone());
           }
-        } catch (err) {
-          console.warn("SW: Failed to cache:", asset);
+        } catch (e) {
+          /* silently ignore */
         }
       }
     })()
   );
-
   self.skipWaiting();
 });
 
-/* ---------------------------------
-   ACTIVATE → Delete old cache
-----------------------------------*/
+/* ---------------- ACTIVATE ---------------- */
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -55,50 +52,55 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-/* ---------------------------------
-   FETCH HANDLER (SAFE MODE)
-----------------------------------*/
+/* ---------------- FETCH ---------------- */
 self.addEventListener("fetch", event => {
 
-  const request = event.request;
-  const url = new URL(request.url);
+  const req = event.request;
+  const url = new URL(req.url);
 
-  // 🚫 RULE 1: Skip GAS URLs
+  /* 🚫 RULE 1: Never touch GAS */
   if (
     url.hostname.includes("script.google.com") ||
     url.hostname.includes("googleusercontent.com")
   ) {
-    return; // do nothing → allow normal network call
-  }
-
-  // 🚫 RULE 2: Skip POST requests
-  if (request.method === "POST") {
     return;
   }
 
-  // 🌐 STATIC CACHING
+  /* 🚫 RULE 2: Never cache POST */
+  if (req.method !== "GET") {
+    return;
+  }
+
+  /* 🚫 RULE 3: Skip browser extensions */
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return;
+  }
+
+  /* ✅ SAFE STATIC CACHE STRATEGY */
   event.respondWith(
-    caches.match(request).then(cached => {
+    caches.match(req).then(cached => {
       if (cached) return cached;
 
-      return fetch(request)
-        .then(response => {
-          // cache only valid static resources
-          if (response && response.status === 200 && response.type === "basic") {
-            const responseToCache = response.clone(); // safe clone
-
+      return fetch(req)
+        .then(res => {
+          if (
+            res &&
+            res.status === 200 &&
+            res.type === "basic"
+          ) {
+            const clone = res.clone();
             caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, responseToCache);
+              cache.put(req, clone);
             });
           }
-          return response;
+          return res;
         })
         .catch(() => {
-          if (request.destination === "document") {
-            return caches.match("./index.html");
+          /* Offline fallback only for main page */
+          if (req.destination === "document") {
+            return caches.match("./");
           }
         });
     })
   );
 });
-
