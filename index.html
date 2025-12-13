@@ -1,4 +1,4 @@
- <!-- index.html — VCgs1-Fixed (structure preserved) + Addons -->
+<!-- index.html — VCgs1-Fixed (structure preserved) + Addons -->
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -266,7 +266,7 @@
 
 <script>
 /* === IMPORTANT: replace with your deployed Web App URL after deploying Code.gs === */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxByZVmWhTA_8S81Go1H_HrLF4ciMmAB9CW7mC9zJTZXxlOPbUtqgU_bJjfsYnUvTfH4w/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwjYKHF4069_1BSNNChu65KjpywB9V5DUVbVakWBRsbSej67tVY-PGnHfkZfwTTWjadhw/exec';
 
 const overlay = document.getElementById('popupOverlay');
 function showPopup(el){
@@ -319,14 +319,10 @@ function openForm(service){
     const msgEl = e.target.querySelector('.processing');
     msgEl.textContent = '⏳ Processing... Please wait...';
     try{
-      await fetch(GAS_URL,{
-  method:'POST',
-  body:fd,
-  mode:'no-cors'
-});
-msgEl.textContent = '✅ Form submitted successfully!';
-setTimeout(()=>{ closeAllPopups(); box.remove(); },1500);
-
+      const res = await fetch(GAS_URL,{method:'POST',body:fd});
+      const data = await res.json();
+      if(data.result === 'success'){ msgEl.textContent = '✅ Form submitted successfully!'; setTimeout(()=>{ closeAllPopups(); box.remove(); },1500); }
+      else { msgEl.textContent = 'Error'; }
     } catch(err){
       console.error(err);
       msgEl.textContent = 'Error';
@@ -344,14 +340,10 @@ document.getElementById('mfForm').addEventListener('submit', async function(e){
   const msgEl = this.querySelector('.processing');
   msgEl.textContent = '⏳ Processing... Please wait...';
   try {
-   await fetch(GAS_URL,{
-  method:'POST',
-  body:fd,
-  mode:'no-cors'
-});
-msgEl.textContent='✅ Form submitted successfully!';
-setTimeout(()=>closeAllPopups(),1500);
-
+    const res = await fetch(GAS_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
+    else { msgEl.textContent='Error'; }
   } catch(err){ console.error(err); msgEl.textContent='Error'; }
 });
 
@@ -365,14 +357,10 @@ document.getElementById('recommendForm').addEventListener('submit', async functi
   const msgEl = document.getElementById('recommendMessage');
   msgEl.textContent = '⏳ Processing... Please wait...';
   try {
-    await fetch(GAS_URL,{
-  method:'POST',
-  body:fd,
-  mode:'no-cors'
-});
-msgEl.textContent='✅ Form submitted successfully!';
-setTimeout(()=>closeAllPopups(),1500);
-
+    const res = await fetch(GAS_URL,{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.result === 'success'){ msgEl.textContent='✅ Form submitted successfully!'; setTimeout(()=>closeAllPopups(),1500); }
+    else { msgEl.textContent='Error'; }
   } catch(err){ console.error(err); msgEl.textContent='Error'; }
 });
 
@@ -419,14 +407,14 @@ document.getElementById('pdfUploadForm').addEventListener('submit', async e => {
     fd.append('filename', file.name);
 
     try {
-     await fetch(GAS_URL,{
-  method:'POST',
-  body:fd,
-  mode:'no-cors'
-});
-alert('✅ PDF uploaded successfully!');
-closeAllPopups();
-
+      const res = await fetch(GAS_URL, { method: 'POST', body: fd });
+      const data = await res.json();
+      if(data.result === 'success') {
+        alert('✅ PDF uploaded successfully!');
+        closeAllPopups();
+      } else {
+        alert('Upload failed');
+      }
     } catch(err) {
       console.error(err);
       alert('Error: '+err);
@@ -490,17 +478,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
