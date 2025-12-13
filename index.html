@@ -65,6 +65,39 @@
   .message { font-size:14px; color:green; margin-top:5px; display:block; }
   .processing { font-size:14px; color:#ff9800; margin-top:5px; }
   @media(max-width:420px){ .header img{width:80px;height:80px;} .header-text h1{font-size:18px;} .card{max-width:360px;padding:16px;} }
+  /* SAVE CONTACT + SHARE QR row */
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;   /* ⭐ सबसे जरूरी */
+}
+
+
+.action-btn {
+  width: 140px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.save-btn {
+  background: #28a745;
+  color: #fff;
+}
+
+.qr-btn {
+  background: #007bff;
+  color: #fff;
+}
+
 </style>
 </head>
 <body>
@@ -87,7 +120,16 @@
         </a><br>
         <a href="mailto:ram111.2008@rediffmail.com" style="text-decoration:none;color:inherit;">✉️ ram111.2008@rediffmail.com</a>
       </p>
-      <a href="mycontact.vcf" download style="display:inline-block;margin-top:5px; padding:5px 10px;font-size:13px; background:#28a745;color:white; border-radius:6px;text-decoration:none;">Save Contact</a>
+      <div class="action-row">
+  <a href="mycontact.vcf" download class="action-btn save-btn">
+    SAVE CONTACT
+  </a>
+
+  <button type="button" class="action-btn qr-btn" onclick="openQR()">
+    SHARE QR
+  </button>
+</div>
+
     </div>
   </div>
 
@@ -475,13 +517,14 @@ if ("serviceWorker" in navigator) {
   .then(() => console.log("Service Worker registered"));
 }
 </script>
-  <p style="font-size:12px;color:#666;text-align:center;margin-top:20px;">
-This is a personal digital visiting card.  
-All actions (call, WhatsApp, form submission) are user-initiated.
-No misleading or automatic redirection is used.
-</p>
+<script>
+function openQR(){
+  const url = window.location.href;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+  window.open(qrUrl, "_blank");
+}
+</script>
 
 
 </body>
 </html>
-
