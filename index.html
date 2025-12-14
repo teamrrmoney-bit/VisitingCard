@@ -519,7 +519,7 @@ if ("serviceWorker" in navigator) {
 </script>
 <script>
 function openQR(){
-  const url = window.location.href;
+const url = "https://rrmoney.in/app/";
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
   window.open(qrUrl, "_blank");
 }
@@ -528,3 +528,4 @@ function openQR(){
 
 </body>
 </html>
+
