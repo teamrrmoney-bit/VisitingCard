@@ -1,111 +1,144 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RR Money – VCard Download</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RR Money – VCard Download</title>
 
-  <style>
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
-      background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-    }
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.55);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .card{
-      background:#fff;
-      color:#111;
-      width:90%;
-      max-width:380px;
-      border-radius:16px;
-      padding:26px 20px 26px;
-      text-align:center;
-      box-shadow:0 20px 40px rgba(0,0,0,.35);
-      animation:pop .35s ease-out;
-    }
-    @keyframes pop{
-      from{transform:scale(.85);opacity:0}
-      to{transform:scale(1);opacity:1}
-    }
+<style>
+body{
+  margin:0;
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card{
+  background:#fff;
+  color:#111;
+  width:90%;
+  max-width:380px;
+  border-radius:16px;
+  padding:26px 20px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+}
+.photo{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  object-fit:cover;
+  margin:-72px auto 12px;
+  border:4px solid #fff;
+  display:block;
+}
+.btn{
+  display:block;
+  margin-top:18px;
+  background:#0a7cff;
+  color:#fff;
+  text-decoration:none;
+  font-size:18px;
+  font-weight:600;
+  padding:14px 18px;
+  border-radius:12px;
+}
+.note{
+  font-size:13px;
+  color:#333;
+  margin-top:10px;
+}
+.trust{
+  font-size:12px;
+  color:#666;
+  margin-top:6px;
+}
 
-    /* LOGO */
-    .photo{
-      width:96px;
-      height:96px;
-      border-radius:50%;
-      object-fit:cover;
-      margin:-72px auto 12px;
-      border:4px solid #fff;
-      background:#f2f2f2;
-      display:block;
-    }
-
-    h1{
-      font-size:20px;
-      margin:10px 0 6px;
-    }
-    .tag{
-      font-size:14px;
-      color:#555;
-      margin-bottom:14px;
-    }
-    .btn{
-      display:block;
-      margin-top:18px;
-      background:#0a7cff;
-      color:#fff;
-      text-decoration:none;
-      font-size:18px;
-      font-weight:600;
-      padding:14px 18px;
-      border-radius:12px;
-      box-shadow:0 8px 18px rgba(10,124,255,.35);
-    }
-    .btn:active{transform:scale(.97)}
-    .note{
-      font-size:13px;
-      color:#333;
-      margin-top:10px;
-    }
-    .trust{
-      font-size:12px;
-      color:#666;
-      margin-top:6px;
-    }
-  </style>
+/* INSTALL BAR */
+#installBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:#0b5ed7;
+  color:#fff;
+  text-align:center;
+  padding:12px;
+  z-index:9999;
+}
+#installBar button,
+#installBar a{
+  padding:10px 14px;
+  border-radius:6px;
+  font-size:15px;
+  margin:4px;
+  border:none;
+  text-decoration:none;
+}
+#pwaBtn{
+  background:#fff;
+  color:#0b5ed7;
+}
+#apkBtn{
+  background:#198754;
+  color:#fff;
+}
+</style>
 </head>
+
 <body>
 
 <div class="overlay">
   <div class="card">
 
-    <!-- RR MONEY LOGO -->
     <img src="./logo.png" alt="RR Money Logo" class="photo" />
 
     <h1>RR Money – Digital VCard</h1>
     <div class="tag">Official & Secure Business VCard</div>
 
-    <a class="btn" href="/download/RRMoney-VCard.apk">
+    <a class="btn" href="/download/app-release.apk" download>
       📥 DOWNLOAD VCard
     </a>
 
-    <div class="note">Tap करने पर Android VCard App डाउनलोड होगी</div>
-    <div class="trust">🔐 Play Store के बाहर होने के कारण पहली बार सुरक्षा संदेश आ सकता है</div>
+    <div class="note">Tap करने पर Android App डाउनलोड होगी</div>
+    <div class="trust">🔐 पहली बार Android सुरक्षा संदेश आ सकता है</div>
 
   </div>
 </div>
+
+<!-- INSTALL BAR -->
+<div id="installBar">
+  <button id="pwaBtn">⚡ Install App</button>
+  <a id="apkBtn" href="/download/app-release.apk" download>
+    📦 Android APK
+  </a>
+</div>
+
+<!-- PWA SCRIPT -->
+<script>
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+document.getElementById('pwaBtn').onclick = async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+};
+</script>
 
 </body>
 </html>
