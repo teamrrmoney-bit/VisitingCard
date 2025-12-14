@@ -1,3 +1,4 @@
+final HTML 
 <!-- index.html — VCgs1-Fixed (structure preserved) + Addons -->
 <!DOCTYPE html>
 <html lang="hi">
@@ -133,16 +134,6 @@
     </div>
   </div>
 
-  <!-- Briefcase -->
-  <div class="my-container">
-    <h3>Keep all your policies & investments safe — use this briefcase 👜 👇</h3>
-    <span class="arrow-down">👇</span>
-    <div class="my-box">
-      <button class="btn7" onclick="openPdfForm('upload')">Upload PDF</button>
-      <button class="btn8" onclick="openPdfForm('view')">View PDF</button>
-    </div>
-  </div>
-
   <!-- To Buy Buttons (these 6 belong to VC7a sheet) -->
   <div class="buy-container">
     <h3>To Buy Click the button</h3>
@@ -156,7 +147,17 @@
       <button class="btn6" onclick="openForm('PA Policy')">PA Policy</button>
     </div>
   </div>
-  
+
+  <!-- Briefcase -->
+  <div class="my-container">
+    <h3>Keep all your policies & investments safe — use this briefcase 👜 👇</h3>
+    <span class="arrow-down">👇</span>
+    <div class="my-box">
+      <button class="btn7" onclick="openPdfForm('upload')">Upload PDF</button>
+      <button class="btn8" onclick="openPdfForm('view')">View PDF</button>
+    </div>
+  </div>
+
 <!-- MF Folios + Pay LIC Premium Buttons (Side by Side, like VC7a) -->
 <div class="buy-box" style="margin-top:10px;">
   <button class="mf-btn" onclick="openMFForm()">MF Folios</button>
@@ -519,7 +520,7 @@ if ("serviceWorker" in navigator) {
 </script>
 <script>
 function openQR(){
-const url = "https://rrmoney.in/download/app-release.apk";
+const url = "https://rrmoney.in/app/";
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
   window.open(qrUrl, "_blank");
 }
@@ -528,6 +529,3 @@ const url = "https://rrmoney.in/download/app-release.apk";
 
 </body>
 </html>
-
-
-
