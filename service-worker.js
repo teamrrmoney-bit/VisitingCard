@@ -69,6 +69,13 @@ self.addEventListener("fetch", event => {
 if (url.hostname.includes("api.qrserver.com")) {
   return;
 }
+  /* 🚫 RULE 1C: Never touch APK downloads */
+if (
+  url.pathname.endsWith(".apk") ||
+  url.pathname.includes("/download/")
+) {
+  return;
+}
 
   /* 🚫 RULE 2: Never cache POST */
   if (req.method !== "GET") {
