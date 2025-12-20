@@ -6,7 +6,7 @@
    ✔ No CORS / POST issues
 ===================================================== */
 
-const CACHE_VERSION = "final-v4";
+const CACHE_VERSION = "final-v4.1";
 const CACHE_NAME = `vc-cache-${CACHE_VERSION}`;
 
 /* 🔹 Only STATIC files (no HTML hardcoding) */
