@@ -160,9 +160,9 @@
       <button class="btn6" onclick="openForm('PA Policy')">PA Policy</button>
     </div>
   </div>
-<!-- MF Folios + Pay LIC Premium Buttons (Side by Side, like VC7a) -->
+<!-- MF Folios App + Pay LIC Premium Buttons (Side by Side, like VC7a) -->
 <div class="buy-box" style="margin-top:10px;">
-  <button class="mf-btn" onclick="openMFForm()">MF Folios</button>
+  <button class="mf-btn" onclick="openMFForm()">MF Folios App</button>
   <button class="pay-lic-btn" onclick="window.open('https://ebiz.licindia.in/D2CPM/?_ga=2.186637225.1458300277.1759801256-903306253.1720361504#DirectPay','_blank')">Pay LIC Premium here</button>
 </div>
 
@@ -235,7 +235,7 @@
   </form>
 </div>
 
-<!-- MF Folios Popup -->
+<!-- MF Folios App Popup -->
 <div class="form-popup" id="mfPopup">
   <h3>कृपया मुझे मेरे Mutual Funds Folios देखने के लिए अपना App देने की कृपा करें</h3>
   <button class="closeBtn" onclick="closeAllPopups()">✕</button>
@@ -375,7 +375,7 @@ function openForm(service){
   });
 }
 
-/* MF Folios (maps to VC7C_MF) */
+/* MF Folios App (maps to VC7C_MF) */
 function openMFForm(){ showPopup(document.getElementById('mfPopup')); }
 document.getElementById('mfForm').addEventListener('submit', async function(e){
   e.preventDefault();
@@ -531,6 +531,7 @@ const url = "https://rrmoney.in/";
 
 </body>
 </html>
+
 
 
 
